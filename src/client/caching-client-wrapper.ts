@@ -18,13 +18,13 @@ class CachingClientWrapper {
     const stored = await this.getCache(cachekey);
     if (stored) {
       return stored;
-    } else {
-      const result = await this.client.getContactByEmail(email);
-      if (result) {
-        await this.setCache(cachekey, result);
-      }
-      return result;
     }
+
+    const result = await this.client.getContactByEmail(email);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
   }
 
   public async deleteContactByEmail(email: string) {
@@ -40,13 +40,13 @@ class CachingClientWrapper {
     const stored = await this.getCache(cachekey);
     if (stored) {
       return stored;
-    } else {
-      const result = await this.client.findWorkflowByName(name);
-      if (result) {
-        await this.setCache(cachekey, result);
-      }
-      return result;
     }
+
+    const result = await this.client.findWorkflowByName(name);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
   }
 
   // all non-cached methods, just referencing the original function
@@ -98,7 +98,6 @@ class CachingClientWrapper {
 
   public async setCache(key: string, value: any) {
     try {
-      // arrOfKeys will store an array of all cache keys used in this scenario run, so it can be cleared easily
       const arrOfKeys = await this.getCache(this.cachePrefix) || [];
       arrOfKeys.push(key);
       await this.setAsync(key, 600, JSON.stringify(value));

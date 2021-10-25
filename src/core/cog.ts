@@ -16,6 +16,7 @@ export class Cog implements ICogServiceServer {
   private steps: StepInterface[];
   private redisClient: any;
 
+  // tslint:disable-next-line:max-line-length
   constructor (private clientWrapperClass, private stepMap: Record<string, any> = {}, private redisUrl: string = undefined, private mailgunCredentials: Record<string, any> = {}) {
     // tslint:disable-next-line:max-line-length
     this.steps = [].concat(...Object.values(this.getSteps(`${__dirname}/../steps`, clientWrapperClass)));
@@ -31,7 +32,9 @@ export class Cog implements ICogServiceServer {
       // Handle the error event so that it doesn't crash
       c.on('error', () => {
         // Send an email if a bad redisUrl is passed
+        // tslint:disable-next-line:max-line-length
         if (this.mailgunCredentials.apiKey && this.mailgunCredentials.domain && this.mailgunCredentials.alertEmail && !emailSent) {
+          // tslint:disable-next-line:max-line-length
           const mg = mailgun({ apiKey: this.mailgunCredentials.apiKey, domain: this.mailgunCredentials.domain });
           const emailData = {
             from: `Salesforce Cog <noreply@${this.mailgunCredentials.domain}>`,
@@ -135,6 +138,7 @@ export class Cog implements ICogServiceServer {
       }
 
       const step: Step = runStepRequest.getStep();
+      // tslint:disable-next-line:max-line-length
       const response: RunStepResponse = await this.dispatchStep(step, runStepRequest, call.metadata, client);
       call.write(response);
 
@@ -217,8 +221,8 @@ export class Cog implements ICogServiceServer {
     if (this.redisClient) {
       const client = new ClientWrapper(auth);
       return new this.clientWrapperClass(client, this.redisClient, idMap);
-    } else {
-      return new ClientWrapper(auth);
     }
+
+    return new ClientWrapper(auth);
   }
 }
