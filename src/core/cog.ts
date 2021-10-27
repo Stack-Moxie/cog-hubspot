@@ -37,10 +37,10 @@ export class Cog implements ICogServiceServer {
           // tslint:disable-next-line:max-line-length
           const mg = mailgun({ apiKey: this.mailgunCredentials.apiKey, domain: this.mailgunCredentials.domain });
           const emailData = {
-            from: `Salesforce Cog <noreply@${this.mailgunCredentials.domain}>`,
+            from: `HubSpot Cog <noreply@${this.mailgunCredentials.domain}>`,
             to: this.mailgunCredentials.alertEmail,
-            subject: 'Broken Redis Url in Salesforce Cog',
-            text: 'The redis url in the Salesforce Cog is no longer working. Caching is disabled for the Salesforce Cog.',
+            subject: 'Broken Redis Url in HubSpot Cog',
+            text: 'The redis url in the HubSpot Cog is no longer working. Caching is disabled for the HubSpot Cog.',
           };
           mg.messages().send(emailData, (error, body) => {
             console.log('email sent: ', body);
