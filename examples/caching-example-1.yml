@@ -1,0 +1,29 @@
+scenario: Contact Caching
+description: >
+  This scenario proves that contact creation, checking, and deletion steps work
+  as expected.
+
+tokens:
+  test.email: hubspot1@example.com
+  test.lastname: Doe
+  test.company: Sample Company
+  test.workflow: MQL and Email
+  expected.stage: marketingqualifiedlead
+
+steps:
+- step: Given I create or update a HubSpot Contact
+  data:
+    contact:
+      email: '{{test.email}}'
+      lastname: '{{test.lastname}}'
+      company: '{{test.company}}'
+      lifecyclestage: lead
+- step: Then the email field on HubSpot Contact {{test.email}} should be set
+- step: And the company field on HubSpot Contact {{test.email}} should be one of {{test.company}}
+- step: And the createdate field on HubSpot Contact {{test.email}} should be greater than 2019-01-01
+- step: When I enroll the {{test.email}} HubSpot Contact into workflow {{test.workflow}}
+- step: Then the {{test.email}} HubSpot Contact should currently be enrolled in workflow {{test.workflow}}
+- step: Then the lifecyclestage field on HubSpot Contact {{test.email}} should be {{expected.stage}}
+  failAfter: 60
+- waitFor: 10
+  step: Finally, delete the {{test.email}} HubSpot Contact
