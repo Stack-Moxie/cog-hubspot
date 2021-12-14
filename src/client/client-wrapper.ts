@@ -43,14 +43,23 @@ class ClientWrapper {
   }
 }
 
-interface ClientWrapper extends ContactAwareMixin, WorkflowAwareMixin, DateAwareMixin, TicketAwareMixin {}
+interface ClientWrapper extends
+  ContactAwareMixin,
+  WorkflowAwareMixin,
+  DateAwareMixin,
+  TicketAwareMixin { }
 
-applyMixins(ClientWrapper, [ContactAwareMixin, WorkflowAwareMixin, DateAwareMixin, TicketAwareMixin]);
+applyMixins(ClientWrapper, [
+  ContactAwareMixin,
+  WorkflowAwareMixin,
+  DateAwareMixin,
+  TicketAwareMixin,
+]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
   baseCtors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
-          // tslint:disable-next-line:max-line-length
+      // tslint:disable-next-line:max-line-length
       Object.defineProperty(derivedCtor.prototype, name, Object.getOwnPropertyDescriptor(baseCtor.prototype, name));
     });
   });

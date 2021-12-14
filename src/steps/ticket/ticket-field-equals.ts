@@ -73,7 +73,7 @@ export class TicketFieldEquals extends BaseStep implements StepInterface {
       if (!ticket.properties.hasOwnProperty(field)) {
         return this.error('Ticket does not have the property %s', [field]);
       }
-      const actual = ticket.properties[field]
+      const actual = ticket.properties[field];
 
       ticket['id'] = id;
       const record = this.createRecord(ticket);

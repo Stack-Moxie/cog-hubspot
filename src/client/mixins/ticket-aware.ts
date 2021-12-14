@@ -11,7 +11,7 @@ export class TicketAwareMixin {
         method: 'POST',
         path: '/crm/v3/objects/tickets',
         body: {
-          properties: ticket
+          properties: ticket,
         },
       }).then((result) => {
         resolve(result);
@@ -28,7 +28,7 @@ export class TicketAwareMixin {
         method: 'PATCH',
         path: `/crm/v3/objects/tickets/${+id}`,
         body: {
-          properties: data
+          properties: data,
         },
       }).then((result) => {
         resolve(result);

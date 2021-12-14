@@ -46,7 +46,7 @@ export class CreateTicketStep extends BaseStep implements StepInterface {
   async executeStep(step: Step) {
     const stepData: any = step.getData().toJavaScript();
     const ticket: string = stepData.ticket;
-    
+
     try {
       const data = await this.client.createTicket(ticket);
       const record = this.createRecord(data);
