@@ -4,6 +4,7 @@ import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 import { ContactAwareMixin, WorkflowAwareMixin } from './mixins';
 import { DateAwareMixin } from './mixins/date-aware';
+import { TicketAwareMixin } from './mixins/ticket-aware';
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
@@ -42,14 +43,23 @@ class ClientWrapper {
   }
 }
 
-interface ClientWrapper extends ContactAwareMixin, WorkflowAwareMixin, DateAwareMixin {}
+interface ClientWrapper extends
+  ContactAwareMixin,
+  WorkflowAwareMixin,
+  DateAwareMixin,
+  TicketAwareMixin { }
 
-applyMixins(ClientWrapper, [ContactAwareMixin, WorkflowAwareMixin, DateAwareMixin]);
+applyMixins(ClientWrapper, [
+  ContactAwareMixin,
+  WorkflowAwareMixin,
+  DateAwareMixin,
+  TicketAwareMixin,
+]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
   baseCtors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
-          // tslint:disable-next-line:max-line-length
+      // tslint:disable-next-line:max-line-length
       Object.defineProperty(derivedCtor.prototype, name, Object.getOwnPropertyDescriptor(baseCtor.prototype, name));
     });
   });

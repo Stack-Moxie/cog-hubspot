@@ -20,6 +20,7 @@ describe('ClientWrapper', () => {
   beforeEach(() => {
     hubspotClientStub = {
       refreshAccessToken: sinon.stub(),
+      apiRequest: sinon.spy(),
     };
     hubspotConstructorStub = sinon.stub();
     hubspotConstructorStub.returns(hubspotClientStub)
@@ -103,5 +104,69 @@ describe('ClientWrapper', () => {
     metadata = new Metadata();
     clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
     expect(clientWrapperUnderTest.toDate(validEpochMs)).to.equal('2020-01-17T07:20:03.000Z');
+  });
+
+  describe('TicketAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        apiRequest: sinon.stub(),
+      };
+      hubspotClientStub.apiRequest.returns(Promise.resolve());
+      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then.resolves();
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('createTicket', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleTicket = {
+        anyKey: 'anyValue'
+      };
+      await clientWrapperUnderTest.createTicket(sampleTicket);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'POST',
+        path: '/crm/v3/objects/tickets',
+        body: {
+          properties: sampleTicket
+        },
+      });
+    });
+
+    it('updateTicket', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleId = '123123'
+      const sampleTicket = {
+        anyKey: 'anyValue'
+      };
+      await clientWrapperUnderTest.updateTicket(sampleId, sampleTicket);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'PATCH',
+        path: `/crm/v3/objects/tickets/${+sampleId}`,
+        body: {
+          properties: sampleTicket
+        },
+      });
+    });
+
+    it('deleteTicketById', async () => {
+      const sampleId = '123123'
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      await clientWrapperUnderTest.deleteTicketById(sampleId);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'DELETE',
+        path: `/crm/v3/objects/tickets/${+sampleId}`,
+      });
+    });
+
+    it('getTicketById', async () => {
+      const sampleId = '123123'
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      await clientWrapperUnderTest.getTicketById(sampleId);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'GET',
+        path: `/crm/v3/objects/tickets/${+sampleId}`,
+      });
+    });
   });
 });
