@@ -165,7 +165,7 @@ describe('ClientWrapper', () => {
       await clientWrapperUnderTest.getTicketById(sampleId);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'GET',
-        path: `/crm/v3/objects/tickets/${+sampleId}`,
+        path: `/crm/v3/objects/tickets/${+sampleId}?properties=`,
       });
     });
   });
