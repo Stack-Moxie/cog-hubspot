@@ -52,12 +52,14 @@ export class TicketAwareMixin {
     });
   }
 
-  public async getTicketById(id: string): Promise<Object> {
+  public async getTicketById(id: string, properties: string[] = []): Promise<Object> {
     await this.clientReady;
+    const propertiesParam = properties.join(',');
+
     return new Promise((resolve, reject) => {
       this.client.apiRequest({
         method: 'GET',
-        path: `/crm/v3/objects/tickets/${+id}`,
+        path: `/crm/v3/objects/tickets/${+id}?properties=${propertiesParam}`,
       }).then((result) => {
         resolve(result);
       }, (error) => {

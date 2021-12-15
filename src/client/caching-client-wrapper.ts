@@ -67,14 +67,14 @@ class CachingClientWrapper {
   // Ticket aware methods
   // -------------------------------------------------------------------
 
-  public async getTicketById(id): Promise<Record<string, any>> {
-    const cachekey = `HubSpot|Ticket|${id}|${this.cachePrefix}`;
+  public async getTicketById(id, property = []): Promise<Record<string, any>> {
+    const cachekey = `HubSpot|Ticket|${id}|${property.join(',')}|${this.cachePrefix}`;
     const stored = await this.getCache(cachekey);
     if (stored) {
       return stored;
     }
 
-    const result = await this.client.getTicketById(id);
+    const result = await this.client.getTicketById(id, property);
     if (result) {
       await this.setCache(cachekey, result);
     }

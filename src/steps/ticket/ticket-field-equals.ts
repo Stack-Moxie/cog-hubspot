@@ -68,7 +68,7 @@ export class TicketFieldEquals extends BaseStep implements StepInterface {
     const operator = stepData.operator || 'be';
 
     try {
-      const ticket = await this.client.getTicketById(id);
+      const ticket = await this.client.getTicketById(id, [field]);
 
       if (!ticket.properties.hasOwnProperty(field)) {
         return this.error('Ticket does not have the property %s', [field]);
