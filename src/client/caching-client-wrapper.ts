@@ -68,7 +68,7 @@ class CachingClientWrapper {
   // -------------------------------------------------------------------
 
   public async getTicketById(id): Promise<Record<string, any>> {
-    const cachekey = `HubSpot|Ticket|${name}|${this.cachePrefix}`;
+    const cachekey = `HubSpot|Ticket|${id}|${this.cachePrefix}`;
     const stored = await this.getCache(cachekey);
     if (stored) {
       return stored;
