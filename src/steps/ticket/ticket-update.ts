@@ -24,23 +24,23 @@ export class UpdateTicketStep extends BaseStep implements StepInterface {
     type: RecordDefinition.Type.KEYVALUE,
     fields: [{
       field: 'id',
-      type: FieldDefinition.Type.NUMERIC,
+      type: FieldDefinition.Type.STRING,
       description: 'The Ticket\'s ID',
     }, {
       field: 'hs_pipeline_stage',
-      type: FieldDefinition.Type.NUMERIC,
+      type: FieldDefinition.Type.STRING,
       description: 'The Ticket\'s Pipeline Stage',
     }, {
       field: 'hs_pipeline',
-      type: FieldDefinition.Type.EMAIL,
+      type: FieldDefinition.Type.STRING,
       description: 'The Ticket\'s Pipeline',
     }, {
       field: 'hubspot_owner_id',
-      type: FieldDefinition.Type.DATETIME,
+      type: FieldDefinition.Type.STRING,
       description: 'The Ticket\'s Owner ID',
     }, {
       field: 'subject',
-      type: FieldDefinition.Type.DATETIME,
+      type: FieldDefinition.Type.STRING,
       description: 'The Ticket\'s Subject',
     }],
     dynamicFields: true,
