@@ -43,11 +43,21 @@ export class CreateTicketStep extends BaseStep implements StepInterface {
     dynamicFields: true,
   }];
 
+  dateFields = [
+    'closed_date',
+    'createdate',
+  ];
+
   async executeStep(step: Step) {
     const stepData: any = step.getData().toJavaScript();
     const ticket: string = stepData.ticket;
 
     try {
+      Object.keys(ticket).forEach((field) => {
+        if (this.dateFields.includes(field)) {
+          ticket[field] = this.client.toEpoch(new Date(ticket[field]));
+        }
+      });
       const data = await this.client.createTicket(ticket);
       const record = this.createRecord(data);
       return this.pass('Successfully created HubSpot ticket', [], [record]);
