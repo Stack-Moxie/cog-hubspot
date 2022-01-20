@@ -64,6 +64,38 @@ class CachingClientWrapper {
     return await this.client.currentContactWorkflows(contactId);
   }
 
+  // Ticket aware methods
+  // -------------------------------------------------------------------
+
+  public async getTicketById(id, property = []): Promise<Record<string, any>> {
+    const cachekey = `HubSpot|Ticket|${id}|${property.join(',')}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getTicketById(id, property);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
+  public async createTicket(ticket) {
+    await this.clearCache();
+    return await this.client.createTicket(ticket);
+  }
+
+  public async updateTicket(id, ticket) {
+    await this.clearCache();
+    return await this.client.updateTicket(id, ticket);
+  }
+
+  public async deleteTicketById(id) {
+    await this.clearCache();
+    return await this.client.deleteTicketById(id);
+  }
+
   // all non-cached methods, just referencing the original function
   // -------------------------------------------------------------------
 
