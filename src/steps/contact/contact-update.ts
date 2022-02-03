@@ -59,17 +59,13 @@ export class UpdateContactStep extends BaseStep implements StepInterface {
         });
       });
 
-      const data = await this.client.updateContactById(id, contact);
+      await this.client.updateContactById(id, contact);
       const createdContact = await this.client.getContactById(id);
       const record = this.createRecord(createdContact);
 
-      if (data) {
-        return this.pass('Successfully updated HubSpot contact %s', [id], [record]);
-      } else {
-        return this.fail('Unable to create or update HubSpot contact');
-      }
+      return this.pass('Successfully updated HubSpot contact %s', [id], [record]);
     } catch (e) {
-      return this.error('There was an error creating or updating the contact in HubSpot: %s', [
+      return this.error('There was an error updating the contact in HubSpot: %s', [
         e.toString(),
       ]);
     }
