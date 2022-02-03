@@ -100,32 +100,6 @@ describe('UpdateContactStep', () => {
       });
     });
 
-    describe('Contact not created nor updated', () => {
-      beforeEach(() => {
-        protoStep.setData(Struct.fromJavaScript({
-          contact:  {
-            id: '123123123',
-            properties: {
-              createdate: { value: new Date().valueOf() },
-              lastmodifieddate: { value: new Date().valueOf() },
-            },
-          },
-        }));
-        clientWrapperStub.updateContactById.returns(Promise.resolve(undefined));
-        clientWrapperStub.getContactById.returns(Promise.resolve({
-          properties: {
-            createdate: 'someDate',
-            lastmodifieddate: 'someDate',
-          },
-        }));
-      });
-
-      it('should respond with fail', async () => {
-        const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
-        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
-      });
-    });
-
     describe('Error occurred', () => {
       beforeEach(() => {
         protoStep.setData(Struct.fromJavaScript({
