@@ -69,7 +69,6 @@ export class UpdateContactStep extends BaseStep implements StepInterface {
         return this.fail('Unable to create or update HubSpot contact');
       }
     } catch (e) {
-      console.log(e);
       return this.error('There was an error creating or updating the contact in HubSpot: %s', [
         e.toString(),
       ]);
