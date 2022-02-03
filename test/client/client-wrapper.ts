@@ -1,7 +1,6 @@
 import * as chai from 'chai';
 import { default as sinon } from 'ts-sinon';
 import * as sinonChai from 'sinon-chai';
-import * as justForIdeTypeHinting from 'chai-as-promised';
 import 'mocha';
 
 import { ClientWrapper } from '../../src/client/client-wrapper';
@@ -106,6 +105,86 @@ describe('ClientWrapper', () => {
     expect(clientWrapperUnderTest.toDate(validEpochMs)).to.equal('2020-01-17T07:20:03.000Z');
   });
 
+  describe('ContactAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        contacts: {
+          getByEmail: sinon.stub(),
+          getById: sinon.stub(),
+          createOrUpdate: sinon.stub(),
+          update: sinon.stub(),
+          delete: sinon.stub(),
+        },
+      };
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('getContactByEmail', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleEmail = 'anyEmail@any.com';
+      hubspotClientStub.contacts.getByEmail.resolves({
+        email: sampleEmail
+      });
+      await clientWrapperUnderTest.getContactByEmail(sampleEmail);
+      expect(hubspotClientStub.contacts.getByEmail).to.have.been.calledWith(sampleEmail);
+    });
+
+    it('getContactById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleId = '123123123';
+      hubspotClientStub.contacts.getById.resolves({
+        email: sampleId
+      });
+      await clientWrapperUnderTest.getContactById(sampleId);
+      expect(hubspotClientStub.contacts.getById).to.have.been.calledWith(sampleId);
+    });
+
+    it('createOrUpdateContact', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleEmail = 'anyEmail@any.com';
+      const sampleContact = {
+        email: sampleEmail
+      };
+      hubspotClientStub.contacts.createOrUpdate.resolves({});
+      await clientWrapperUnderTest.createOrUpdateContact(sampleEmail, sampleContact);
+      expect(hubspotClientStub.contacts.createOrUpdate).to.have.been.calledWith(sampleEmail, sampleContact);
+    });
+
+    it('updateContactById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleId = '123123123';
+      const sampleContact = {
+        id: sampleId
+      };
+      hubspotClientStub.contacts.update.resolves({});
+      await clientWrapperUnderTest.updateContactById(sampleId, sampleContact);
+      expect(hubspotClientStub.contacts.update).to.have.been.calledWith(+sampleId, sampleContact);
+    });
+
+    it('deleteContactByEmail', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleEmail = 'anyEmail@any.com';
+      const sampleId = 'anyId';
+      hubspotClientStub.contacts.getByEmail.resolves({sampleEmail, vid: sampleId});
+      hubspotClientStub.contacts.delete.resolves({});
+      await clientWrapperUnderTest.deleteContactByEmail(sampleEmail);
+      expect(hubspotClientStub.contacts.getByEmail).to.have.been.calledWith(sampleEmail);
+      expect(hubspotClientStub.contacts.delete).to.have.been.calledWith(sampleId);
+    });
+    
+    it('deleteContactById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleEmail = 'anyEmail@any.com';
+      const sampleId = 'anyId';
+      hubspotClientStub.contacts.getById.resolves({sampleEmail, vid: sampleId});
+      hubspotClientStub.contacts.delete.resolves({});
+      await clientWrapperUnderTest.deleteContactById(sampleId);
+      expect(hubspotClientStub.contacts.getById).to.have.been.calledWith(sampleId);
+      expect(hubspotClientStub.contacts.delete).to.have.been.calledWith(sampleId);
+    });
+  })
+
   describe('TicketAware', () => {
     beforeEach(() => {
       hubspotClientStub = {
@@ -167,6 +246,53 @@ describe('ClientWrapper', () => {
         method: 'GET',
         path: `/crm/v3/objects/tickets/${+sampleId}?properties=`,
       });
+    });
+
+
+  });
+
+  describe('WorkflowAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        workflows: sinon.stub(),
+      };
+      hubspotClientStub.workflows = {
+        enroll: sinon.stub(),
+        getAll: sinon.stub(),
+        current: sinon.stub(),
+      };
+
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('enrollContactToWorkflow', async () => {
+      const sampleEmail = '123123'
+      const sampleWorkflow = { anyKey: 'anyValue' };
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      hubspotClientStub.workflows.enroll.resolves();
+      await clientWrapperUnderTest.enrollContactToWorkflow(sampleWorkflow, sampleEmail);
+      expect(hubspotClientStub.workflows.enroll).to.have.been.calledWith(sampleWorkflow, sampleEmail);
+    });
+
+    it('findWorkflowByName', async () => {
+      const sampleName = '123123'
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      hubspotClientStub.workflows.getAll.resolves({
+        workflows: [{
+          name: sampleName,
+        }]
+      });
+      await clientWrapperUnderTest.findWorkflowByName(sampleName);
+      expect(hubspotClientStub.workflows.getAll).to.have.been.calledWith();
+    });
+
+    it('currentContactWorkflows', async () => {
+      const sampleId = '123123'
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      hubspotClientStub.workflows.current.resolves({});
+      await clientWrapperUnderTest.currentContactWorkflows(sampleId);
+      expect(hubspotClientStub.workflows.current).to.have.been.calledWith(sampleId);
     });
   });
 });
