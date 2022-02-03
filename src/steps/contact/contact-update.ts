@@ -6,7 +6,7 @@ import { Step, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } f
 export class UpdateContactStep extends BaseStep implements StepInterface {
 
   protected stepName: string = 'Update a HubSpot contact';
-  protected stepExpression: string = 'update a hubspot contact';
+  protected stepExpression: string = 'update a hubspot contact with id (?<id>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
 
   protected expectedFields: Field[] = [{
@@ -59,7 +59,6 @@ export class UpdateContactStep extends BaseStep implements StepInterface {
         });
       });
 
-      console.log(id, contact);
       const data = await this.client.updateContactById(id, contact);
       const createdContact = await this.client.getContactById(id);
       const record = this.createRecord(createdContact);

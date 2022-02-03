@@ -32,7 +32,7 @@ describe('UpdateContactStep', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('UpdateContactStep');
       expect(stepDef.getName()).to.equal('Update a HubSpot contact');
-      expect(stepDef.getExpression()).to.equal('update a hubspot contact');
+      expect(stepDef.getExpression()).to.equal('update a hubspot contact with id (?<id>.+)');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.ACTION);
     });
 
