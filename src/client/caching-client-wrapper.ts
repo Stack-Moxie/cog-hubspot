@@ -27,14 +27,38 @@ class CachingClientWrapper {
     return result;
   }
 
+  public async getContactById(id: string) {
+    const cachekey = `HubSpot|Contact|${id}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getContactById(id);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
   public async createOrUpdateContact(email, contact) {
     await this.clearCache();
     return await this.client.createOrUpdateContact(email, contact);
   }
 
+  public async updateContactById(id, contact) {
+    await this.clearCache();
+    return await this.client.updateContactById(id, contact);
+  }
+
   public async deleteContactByEmail(email: string) {
     await this.clearCache();
     return await this.client.deleteContactByEmail(email);
+  }
+
+  public async deleteContactById(id: string) {
+    await this.clearCache();
+    return await this.client.deleteContactById(id);
   }
 
   // Workflow aware methods
