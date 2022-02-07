@@ -17,9 +17,12 @@ describe('CachingClientWrapper', () => {
   beforeEach(() => {
     clientWrapperStub = {
       getContactByEmail: sinon.spy(),
+      getContactById: sinon.spy(),
       deleteContactByEmail: sinon.spy(),
+      deleteContactById: sinon.spy(),
       findWorkflowByName: sinon.spy(),
       createOrUpdateContact: sinon.spy(),
+      updateContactById: sinon.spy(),
       enrollContactToWorkflow: sinon.spy(),
       currentContactWorkflows: sinon.spy(),
       isDate: sinon.spy(),
@@ -68,6 +71,34 @@ describe('CachingClientWrapper', () => {
     });
   });
 
+  it('getContactById using original function', (done) => {
+    const expectedId = 'test@example.com';
+    cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
+    cachingClientWrapperUnderTest.getAsync = sinon.stub().returns(false);
+    cachingClientWrapperUnderTest.getContactById(expectedId);
+
+    setTimeout(() => {
+      expect(clientWrapperStub.getContactById).to.have.been.calledWith(expectedId);
+      done();
+    });
+  });
+
+  it('getContactById using cache', (done) => {
+    const expectedId = 'test@example.com';
+    cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
+    cachingClientWrapperUnderTest.getAsync = sinon.stub().returns('"expectedCachedValue"');
+    let actualCachedValue: string;
+    (async () => {
+      actualCachedValue = await cachingClientWrapperUnderTest.getContactById(expectedId);
+    })();
+
+    setTimeout(() => {
+      expect(clientWrapperStub.getContactById).to.not.have.been.called;
+      expect(actualCachedValue).to.equal('expectedCachedValue');
+      done();
+    });
+  });
+
   it('deleteContactByEmail', (done) => {
     const expectedEmail = 'test@example.com';
     cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
@@ -77,6 +108,19 @@ describe('CachingClientWrapper', () => {
     setTimeout(() => {
       expect(cachingClientWrapperUnderTest.clearCache).to.have.been.called;
       expect(clientWrapperStub.deleteContactByEmail).to.have.been.calledWith(expectedEmail);
+      done();
+    });
+  });
+
+  it('deleteContactById', (done) => {
+    const expectedId = 'test@example.com';
+    cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
+    cachingClientWrapperUnderTest.clearCache = sinon.spy();
+    cachingClientWrapperUnderTest.deleteContactById(expectedId);
+
+    setTimeout(() => {
+      expect(cachingClientWrapperUnderTest.clearCache).to.have.been.called;
+      expect(clientWrapperStub.deleteContactById).to.have.been.calledWith(expectedId);
       done();
     });
   });
@@ -119,6 +163,20 @@ describe('CachingClientWrapper', () => {
     setTimeout(() => {
       expect(cachingClientWrapperUnderTest.clearCache).to.have.been.called;
       expect(clientWrapperStub.createOrUpdateContact).to.have.been.calledWith(email, exampleObj);
+      done();
+    });
+  })
+
+  it('updateContactById using original function', (done) => {
+    const exampleObj = {a: 1};
+    const id = 'any@anyEmail.com'
+    cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
+    cachingClientWrapperUnderTest.clearCache = sinon.spy();
+    cachingClientWrapperUnderTest.updateContactById(id, exampleObj);
+
+    setTimeout(() => {
+      expect(cachingClientWrapperUnderTest.clearCache).to.have.been.called;
+      expect(clientWrapperStub.updateContactById).to.have.been.calledWith(id, exampleObj);
       done();
     });
   })
