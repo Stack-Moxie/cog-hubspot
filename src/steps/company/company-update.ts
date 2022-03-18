@@ -1,0 +1,63 @@
+/*tslint:disable:no-else-after-return*/
+
+import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
+import { Step, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
+
+export class UpdateCompanyStep extends BaseStep implements StepInterface {
+
+  protected stepName: string = 'Update a HubSpot company';
+  protected stepExpression: string = 'update a hubspot company';
+  protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+
+  protected expectedFields: Field[] = [{
+    field: 'id',
+    type: FieldDefinition.Type.STRING,
+    description: 'Company\'s ID',
+  }, {
+    field: 'company',
+    type: FieldDefinition.Type.MAP,
+    description: 'A map of field names to field values',
+  }];
+
+  protected expectedRecords: ExpectedRecord[] = [{
+    id: 'company',
+    type: RecordDefinition.Type.KEYVALUE,
+    fields: [{
+      field: 'id',
+      type: FieldDefinition.Type.STRING,
+      description: 'The Company\'s ID',
+    }, {
+      field: 'name',
+      type: FieldDefinition.Type.STRING,
+      description: 'The Company\'s Name',
+    }],
+    dynamicFields: true,
+  }];
+
+  async executeStep(step: Step) {
+    const stepData: any = step.getData().toJavaScript();
+    const id: string = stepData.id;
+    const company: string = stepData.company;
+
+    try {
+      const data = await this.client.updateCompanyById(id, company);
+      const record = this.createRecord(data);
+
+      return this.pass('Successfully updated HubSpot company %s', [id], [record]);
+    } catch (e) {
+      return this.error('There was an error updating the company in HubSpot: %s', [
+        e.toString(),
+      ]);
+    }
+  }
+
+  public createRecord(company): StepRecord {
+    const obj = {};
+    obj['id'] = company.companyId;
+    Object.keys(company.properties).forEach(key => obj[key] = company.properties[key].value);
+    const record = this.keyValue('company', 'Updated Company', obj);
+    return record;
+  }
+}
+
+export { UpdateCompanyStep as Step };
