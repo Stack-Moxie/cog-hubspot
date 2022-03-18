@@ -54,7 +54,7 @@ export class UpdateDealStep extends BaseStep implements StepInterface {
           value: stepData.deal[key],
         });
       });
-      const data = await this.client.updateDeal(id, deal);
+      const data = await this.client.updateDealById(id, deal);
       const record = this.createRecord(data);
 
       return this.pass('Successfully updated HubSpot deal %s', [id], [record]);

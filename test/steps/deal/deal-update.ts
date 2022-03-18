@@ -18,7 +18,7 @@ describe('updateDealStep', () => {
   beforeEach(() => {
     protoStep = new ProtoStep();
     clientWrapperStub = sinon.stub();
-    clientWrapperStub.updateDeal = sinon.stub();
+    clientWrapperStub.updateDealById = sinon.stub();
     clientWrapperStub.getDealById = sinon.stub();
     clientWrapperStub.toEpoch = sinon.stub();
     clientWrapperStub.toEpoch.returns(new Date().valueOf());
@@ -54,7 +54,7 @@ describe('updateDealStep', () => {
 
   describe('ExecuteStep', () => {
     describe('Expected Parameters', () => {
-      it('should call updateDeal with expected id and deal', async () => {
+      it('should call updateDealById with expected id and deal', async () => {
         const expectedId: string = '123123';
         const expectedDeal = {
           properties: [{
@@ -70,7 +70,7 @@ describe('updateDealStep', () => {
         }));
 
         await stepUnderTest.executeStep(protoStep);
-        expect(clientWrapperStub.updateDeal).to.have.been.calledWith(expectedId, expectedDeal);
+        expect(clientWrapperStub.updateDealById).to.have.been.calledWith(expectedId, expectedDeal);
       });
     });
 
@@ -88,7 +88,7 @@ describe('updateDealStep', () => {
             anyKey: 'anyValue',
           },
         }));
-        clientWrapperStub.updateDeal.returns(Promise.resolve({
+        clientWrapperStub.updateDealById.returns(Promise.resolve({
           dealId: expectedId,
           properties: expectedDeal
         }));
@@ -111,7 +111,7 @@ describe('updateDealStep', () => {
             },
           },
         }));
-        clientWrapperStub.updateDeal.returns(Promise.resolve(undefined));
+        clientWrapperStub.updateDealById.returns(Promise.resolve(undefined));
       });
 
       it('should respond with fail', async () => {
@@ -132,7 +132,7 @@ describe('updateDealStep', () => {
             },
           },
         }));
-        clientWrapperStub.updateDeal.returns(Promise.reject('Error'));
+        clientWrapperStub.updateDealById.returns(Promise.reject('Error'));
       });
 
       it('should respond with error', async () => {
