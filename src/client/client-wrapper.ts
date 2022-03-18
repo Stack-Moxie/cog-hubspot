@@ -3,7 +3,9 @@ import * as Hubspot from 'hubspot';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 import { ContactAwareMixin, WorkflowAwareMixin } from './mixins';
+import { CompanyAwareMixin } from './mixins/company-aware';
 import { DateAwareMixin } from './mixins/date-aware';
+import { DealAwareMixin } from './mixins/deal-aware';
 import { TicketAwareMixin } from './mixins/ticket-aware';
 
 class ClientWrapper {
@@ -47,13 +49,17 @@ interface ClientWrapper extends
   ContactAwareMixin,
   WorkflowAwareMixin,
   DateAwareMixin,
-  TicketAwareMixin { }
+  TicketAwareMixin,
+  CompanyAwareMixin,
+  DealAwareMixin { }
 
 applyMixins(ClientWrapper, [
   ContactAwareMixin,
   WorkflowAwareMixin,
   DateAwareMixin,
   TicketAwareMixin,
+  CompanyAwareMixin,
+  DealAwareMixin,
 ]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {

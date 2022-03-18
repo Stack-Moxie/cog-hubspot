@@ -120,6 +120,64 @@ class CachingClientWrapper {
     return await this.client.deleteTicketById(id);
   }
 
+  public async getCompanyById(id, property = []): Promise<Record<string, any>> {
+    const cachekey = `HubSpot|Company|${id}|${property.join(',')}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getCompanyById(id);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
+  public async createCompany(company) {
+    await this.clearCache();
+    return await this.client.createCompany(company);
+  }
+
+  public async updateCompanyById(id, company) {
+    await this.clearCache();
+    return await this.client.updateCompanyById(id, company);
+  }
+
+  public async deleteCompanyById(id) {
+    await this.clearCache();
+    return await this.client.deleteCompanyById(id);
+  }
+
+  public async getDealById(id, property = []): Promise<Record<string, any>> {
+    const cachekey = `HubSpot|Deal|${id}|${property.join(',')}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getDealById(id);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
+  public async createDeal(company) {
+    await this.clearCache();
+    return await this.client.createDeal(company);
+  }
+
+  public async updateDealById(id, company) {
+    await this.clearCache();
+    return await this.client.updateDealById(id, company);
+  }
+
+  public async deleteDealById(id) {
+    await this.clearCache();
+    return await this.client.deleteDealById(id);
+  }
+
   // all non-cached methods, just referencing the original function
   // -------------------------------------------------------------------
 
