@@ -9,7 +9,7 @@ import { Step } from '../../../src/steps/company/company-update';
 
 chai.use(sinonChai);
 
-describe('updateCompanyByIdStep', () => {
+describe('UpdateCompanyStep', () => {
   const expect = chai.expect;
   let protoStep: ProtoStep;
   let stepUnderTest: Step;
@@ -57,13 +57,16 @@ describe('updateCompanyByIdStep', () => {
       it('should call updateCompanyById with expected id and company', async () => {
         const expectedId: string = '123123';
         const expectedCompany = {
-          subject: {
-            value: 'anySubject'
-          }
+          properties: [{
+            name: 'anyKey',          
+            value: 'anyValue'
+          }]
         };
         protoStep.setData(Struct.fromJavaScript({
           id: expectedId,
-          company: expectedCompany,
+          company: {
+            anyKey: 'anyValue'
+          },
         }));
 
         await stepUnderTest.executeStep(protoStep);
@@ -75,17 +78,24 @@ describe('updateCompanyByIdStep', () => {
       beforeEach(() => {
         const expectedId: string = '123123';
         const expectedCompany = {
-          subject: {
-            value: 'anySubject'
-          }
+          properties: [{
+            name: 'anyKey',          
+            value: 'anyValue'
+          }]
         };
         protoStep.setData(Struct.fromJavaScript({
           id: expectedId,
-          company: expectedCompany,
+          company: {
+            anyKey: 'anyValue',
+          },
         }));
         clientWrapperStub.updateCompanyById.returns(Promise.resolve({
           companyId: expectedId,
-          properties: expectedCompany
+          properties: {
+            anyKey: {
+              value: 'anyValue'
+            }
+          }
         }));
       });
 
