@@ -57,13 +57,16 @@ describe('updateDealStep', () => {
       it('should call updateDeal with expected id and deal', async () => {
         const expectedId: string = '123123';
         const expectedDeal = {
-          subject: {
-            value: 'anySubject'
-          }
+          properties: [{
+            name: 'anyKey',
+            value: 'anyValue'
+          }]
         };
         protoStep.setData(Struct.fromJavaScript({
           id: expectedId,
-          deal: expectedDeal,
+          deal: {
+            anyKey: 'anyValue',
+          },
         }));
 
         await stepUnderTest.executeStep(protoStep);
@@ -81,7 +84,9 @@ describe('updateDealStep', () => {
         };
         protoStep.setData(Struct.fromJavaScript({
           id: expectedId,
-          deal: expectedDeal,
+          deal: {
+            anyKey: 'anyValue',
+          },
         }));
         clientWrapperStub.updateDeal.returns(Promise.resolve({
           dealId: expectedId,

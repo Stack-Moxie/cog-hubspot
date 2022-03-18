@@ -37,9 +37,23 @@ export class UpdateDealStep extends BaseStep implements StepInterface {
   async executeStep(step: Step) {
     const stepData: any = step.getData().toJavaScript();
     const id: string = stepData.id;
-    const deal: string = stepData.deal;
+    const deal: Object = {
+      properties: [],
+    };
+    const dateTokenFormat = /\d{4}-\d{2}-\d{2}(?:.?\d{2}:\d{2}:\d{2})?/;
+    for (const key in stepData.deal) {
+      if (dateTokenFormat.test(stepData.deal[key])) {
+        stepData.deal[key] = this.client.toEpoch(new Date(stepData.deal[key]));
+      }
+    }
 
     try {
+      Object.keys(stepData.deal).forEach((key) => {
+        deal['properties'].push({
+          name: key,
+          value: stepData.deal[key],
+        });
+      });
       const data = await this.client.updateDeal(id, deal);
       const record = this.createRecord(data);
 

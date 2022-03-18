@@ -52,13 +52,16 @@ describe('CreateDealStep', () => {
     describe('Expected Parameters', () => {
       it('should call createDeal with expected dealId and deal', async () => {
         const expectedDeal = {
-          anyKey: {
+          properties: [{
+            name: 'anyKey',
             value: 'anyValue'
-          },
+          }],
         };
         
         protoStep.setData(Struct.fromJavaScript({
-          deal: expectedDeal
+          deal: {
+            anyKey: 'anyValue'
+          }
         }));
 
         await stepUnderTest.executeStep(protoStep);
@@ -68,17 +71,18 @@ describe('CreateDealStep', () => {
 
     describe('Deal successfully created', () => {
       beforeEach(() => {
-        const expectedDeal = {
-          anyKey: {
-            value: 'anyValue'
-          },
-        };
         protoStep.setData(Struct.fromJavaScript({
-          deal:  expectedDeal,
+          deal: {
+            anyKey: 'anyValue'
+          }
         }));
         clientWrapperStub.createDeal.resolves({
           dealId: 123123,
-          properties: expectedDeal
+          properties: {
+            anyKey: {
+              value: 'anyValue'
+            }
+          }
         });
       });
 
@@ -90,13 +94,10 @@ describe('CreateDealStep', () => {
 
     describe('Deal not created', () => {
       beforeEach(() => {
-        const expectedDeal = {
-          anyKey: {
-            value: 'anyValue'
-          },
-        };
         protoStep.setData(Struct.fromJavaScript({
-          deal:  expectedDeal,
+          deal: {
+            anyKey: 'anyValue'
+          }
         }));
         clientWrapperStub.createDeal.returns(Promise.resolve(undefined));
       });
@@ -109,13 +110,10 @@ describe('CreateDealStep', () => {
 
     describe('Error occurred', () => {
       beforeEach(() => {
-        const expectedDeal = {
-          anyKey: {
-            value: 'anyValue'
-          },
-        };
         protoStep.setData(Struct.fromJavaScript({
-          deal:  expectedDeal,
+          deal: {
+            anyKey: 'anyValue'
+          }
         }));
         clientWrapperStub.createDeal.returns(Promise.reject('Error'));
       });

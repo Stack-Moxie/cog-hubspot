@@ -52,13 +52,18 @@ describe('CreateCompanyStep', () => {
     describe('Expected Parameters', () => {
       it('should call createCompany with expected companyId and company', async () => {
         const expectedCompany = {
-          anyKey: {
-            value: 'anyValue'
-          },
+          properties: [
+            {
+              name: 'anyKey',
+              value: 'anyValue'
+            },
+          ]
         };
         
         protoStep.setData(Struct.fromJavaScript({
-          company: expectedCompany
+          company: {
+            anyKey: 'anyValue'
+          }
         }));
 
         await stepUnderTest.executeStep(protoStep);
@@ -69,16 +74,25 @@ describe('CreateCompanyStep', () => {
     describe('Company successfully created', () => {
       beforeEach(() => {
         const expectedCompany = {
-          anyKey: {
-            value: 'anyValue'
-          },
+          properties: [
+            {
+              name: 'anyKey',
+              value: 'anyValue'
+            },
+          ]
         };
         protoStep.setData(Struct.fromJavaScript({
-          company:  expectedCompany,
+          company: {
+            anyKey: 'anyValue'
+          }
         }));
         clientWrapperStub.createCompany.resolves({
           companyId: 123123,
-          properties: expectedCompany
+          properties: {
+            anyKey: {
+              value: 'anyValue'
+            }
+          }
         });
       });
 
@@ -91,12 +105,17 @@ describe('CreateCompanyStep', () => {
     describe('Company not created', () => {
       beforeEach(() => {
         const expectedCompany = {
-          anyKey: {
-            value: 'anyValue'
-          },
+          properties: [
+            {
+              name: 'anyKey',
+              value: 'anyValue'
+            },
+          ]
         };
         protoStep.setData(Struct.fromJavaScript({
-          company:  expectedCompany,
+          company: {
+            anyKey: 'anyValue'
+          }
         }));
         clientWrapperStub.createCompany.returns(Promise.resolve(undefined));
       });
@@ -110,12 +129,17 @@ describe('CreateCompanyStep', () => {
     describe('Error occurred', () => {
       beforeEach(() => {
         const expectedCompany = {
-          anyKey: {
-            value: 'anyValue'
-          },
+          properties: [
+            {
+              name: 'anyKey',
+              value: 'anyValue'
+            },
+          ]
         };
         protoStep.setData(Struct.fromJavaScript({
-          company:  expectedCompany,
+          company: {
+            anyKey: 'anyValue'
+          }
         }));
         clientWrapperStub.createCompany.returns(Promise.reject('Error'));
       });
