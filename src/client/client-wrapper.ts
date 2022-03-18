@@ -59,7 +59,7 @@ applyMixins(ClientWrapper, [
   DateAwareMixin,
   TicketAwareMixin,
   CompanyAwareMixin,
-  DealAwareMixin
+  DealAwareMixin,
 ]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
