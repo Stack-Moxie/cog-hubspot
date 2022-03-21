@@ -54,7 +54,6 @@ export class CreateProductStep extends BaseStep implements StepInterface {
       const record = this.createRecord(data);
       return this.pass('Successfully created HubSpot product', [], [record]);
     } catch (e) {
-      console.log(e);
       return this.error('There was an error creating the product in HubSpot: %s', [
         e.toString(),
       ]);
