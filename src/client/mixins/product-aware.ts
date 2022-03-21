@@ -23,7 +23,7 @@ export class ProductAwareMixin {
     await this.clientReady;
     return new Promise((resolve, reject) => {
       this.client.apiRequest({
-        method: 'PATCH',
+        method: 'PUT',
         path: `/crm-objects/v1/objects/products/${+id}`,
         body: product,
       }).then((result) => {
@@ -55,7 +55,7 @@ export class ProductAwareMixin {
     return new Promise((resolve, reject) => {
       this.client.apiRequest({
         method: 'GET',
-        path: `/crm-objects/v1/objects/products/${+id}`,
+        path: `/crm-objects/v1/objects/products/${+id}?properties=${propertiesParam}`,
       }).then((result) => {
         resolve(result);
       }, (error) => {
