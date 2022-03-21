@@ -50,8 +50,6 @@ export class CreateCompanyStep extends BaseStep implements StepInterface {
         });
       });
 
-      console.log(company);
-
       const data = await this.client.createCompany(company);
       const record = this.createRecord(data);
       return this.pass('Successfully created HubSpot company', [], [record]);

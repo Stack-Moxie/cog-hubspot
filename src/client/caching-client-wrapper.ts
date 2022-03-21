@@ -178,6 +178,35 @@ class CachingClientWrapper {
     return await this.client.deleteDealById(id);
   }
 
+  public async getProductById(id, property = []): Promise<Record<string, any>> {
+    const cachekey = `HubSpot|Product|${id}|${property.join(',')}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getProductById(id);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
+  public async createProduct(company) {
+    await this.clearCache();
+    return await this.client.createProduct(company);
+  }
+
+  public async updateProductById(id, company) {
+    await this.clearCache();
+    return await this.client.updateProductById(id, company);
+  }
+
+  public async deleteProductById(id) {
+    await this.clearCache();
+    return await this.client.deleteProductById(id);
+  }
+
   // all non-cached methods, just referencing the original function
   // -------------------------------------------------------------------
 
