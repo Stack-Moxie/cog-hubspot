@@ -178,14 +178,14 @@ class CachingClientWrapper {
     return await this.client.deleteDealById(id);
   }
 
-  public async getProductById(id, property = []): Promise<Record<string, any>> {
-    const cachekey = `HubSpot|Product|${id}|${property.join(',')}|${this.cachePrefix}`;
+  public async getProductById(id, properties = []): Promise<Record<string, any>> {
+    const cachekey = `HubSpot|Product|${id}|${properties.join(',')}|${this.cachePrefix}`;
     const stored = await this.getCache(cachekey);
     if (stored) {
       return stored;
     }
 
-    const result = await this.client.getProductById(id);
+    const result = await this.client.getProductById(id, properties);
     if (result) {
       await this.setCache(cachekey, result);
     }
