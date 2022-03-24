@@ -61,12 +61,12 @@ export class ProductFieldEquals extends BaseStep implements StepInterface {
       if (!product.properties.hasOwnProperty(field)) {
         return this.error('Product does not have the property %s', [field]);
       }
-      const actual = this.client.isDate(product.properties[field]) ?
-          this.client.toDate(product.properties[field]) : product.properties[field];
+      const actual = this.client.isDate(product.properties[field].value) ?
+          this.client.toDate(product.properties[field].value) : product.properties[field].value;
 
       product['id'] = id;
       const record = this.createRecord(product);
-      const result = this.assert(operator, actual.value, expectation, field);
+      const result = this.assert(operator, actual, expectation, field);
 
       return result.valid ? this.pass(result.message, [], [record])
         : this.fail(result.message, [], [record]);
