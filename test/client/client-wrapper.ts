@@ -247,8 +247,240 @@ describe('ClientWrapper', () => {
         path: `/crm/v3/objects/tickets/${+sampleId}?properties=`,
       });
     });
+  });
+
+  describe('MarketingEventAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        apiRequest: sinon.stub(),
+      };
+      hubspotClientStub.apiRequest.returns(Promise.resolve());
+      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then.resolves();
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('createOrUpdateMarketingEvent', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        externalEventId: 'anyValue',
+        externalAccountId: 'anyValue',
+        marketingEvent: {anyKey: 'anyValue'}
+      };
+      await clientWrapperUnderTest.createOrUpdateMarketingEvent(input.marketingEvent, input.externalEventId, input.externalAccountId);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'PUT',
+        path: `/marketing/v3/marketing-events/events/${input.externalEventId}?externalAccountId=${input.externalAccountId}`,
+        body: input.marketingEvent,
+      });
+    });
+
+    it('deleteMarketingEventById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        externalEventId: 'anyValue',
+        externalAccountId: 'anyValue',
+      };
+      await clientWrapperUnderTest.deleteMarketingEventById(input.externalEventId, input.externalAccountId);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'DELETE',
+        path: `/marketing/v3/marketing-events/events/${input.externalEventId}?externalAccountId=${input.externalAccountId}`,
+      });
+    });
+
+    it('getMarketingEventById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        externalEventId: 'anyValue',
+        externalAccountId: 'anyValue',
+      };
+      await clientWrapperUnderTest.getMarketingEventById(input.externalEventId, input.externalAccountId);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'GET',
+        path: `/marketing/v3/marketing-events/events/${input.externalEventId}?externalAccountId=${input.externalAccountId}`,
+      });
+    });
+  });
+
+  describe('ProductAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        apiRequest: sinon.stub(),
+      };
+      hubspotClientStub.apiRequest.returns(Promise.resolve());
+      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then.resolves();
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('createProduct', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      await clientWrapperUnderTest.createProduct([]);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'POST',
+        path: '/crm-objects/v1/objects/products',
+        body: [],
+      });
+    });
+
+    it('updateProductById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        id: 'id',
+        product: {anyKey: 'anyValue'}
+      };
+      await clientWrapperUnderTest.updateProductById(input.id, []);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'PUT',
+        path: `/crm-objects/v1/objects/products/${+input.id}`,
+        body: [],
+      });
+    });
+
+    it('deleteProductById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        id: '1',
+      };
+      await clientWrapperUnderTest.deleteProductById(input.id);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'DELETE',
+        path: `/crm-objects/v1/objects/products/${+input.id}`,
+      });
+    });
+
+    it('getProductById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        id: '1',
+      };
+      await clientWrapperUnderTest.getProductById(input.id);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'GET',
+        path: `/crm-objects/v1/objects/products/${+input.id}?properties=`,
+      });
+    });
+  });
 
 
+  describe('CompanyAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        companies: sinon.stub(),
+      };
+      hubspotClientStub.companies.create = sinon.stub();
+      hubspotClientStub.companies.update = sinon.stub();
+      hubspotClientStub.companies.delete = sinon.stub();
+      hubspotClientStub.companies.getById = sinon.stub();
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('getCompanyById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        id: '1',
+      }
+      hubspotClientStub.companies.getById.resolves({});
+      await clientWrapperUnderTest.getCompanyById(input.id);
+      expect(hubspotClientStub.companies.getById).to.have.been.calledWith(+input.id);
+    });
+
+    it('createCompany', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        company: {
+          anyKey: 'anyValue',
+        }
+      }
+      hubspotClientStub.companies.create.resolves({});
+      await clientWrapperUnderTest.createCompany(input.company);
+      expect(hubspotClientStub.companies.create).to.have.been.calledWith(input.company);
+    });
+
+    it('updateCompanyById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        id: '1',
+        company: {
+          anyKey: 'anyValue',
+        }
+      }
+      hubspotClientStub.companies.update.resolves({});
+      await clientWrapperUnderTest.updateCompanyById(input.id, input.company);
+      expect(hubspotClientStub.companies.update).to.have.been.calledWith(+input.id, input.company);
+    });
+
+    it('deleteCompanyById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        id: '1',
+      }
+      hubspotClientStub.companies.delete.resolves({});
+      await clientWrapperUnderTest.deleteCompanyById(input.id);
+      expect(hubspotClientStub.companies.delete).to.have.been.calledWith(+input.id);
+    });
+  });
+
+  describe('DealAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        deals: sinon.stub(),
+      };
+      hubspotClientStub.deals.create = sinon.stub();
+      hubspotClientStub.deals.updateById = sinon.stub();
+      hubspotClientStub.deals.deleteById = sinon.stub();
+      hubspotClientStub.deals.getById = sinon.stub();
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('getDealById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        id: '1',
+      }
+      hubspotClientStub.deals.getById.resolves({});
+      await clientWrapperUnderTest.getDealById(input.id);
+      expect(hubspotClientStub.deals.getById).to.have.been.calledWith(+input.id);
+    });
+
+    it('createDeal', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        deal: {
+          anyKey: 'anyValue',
+        }
+      }
+      hubspotClientStub.deals.create.resolves({});
+      await clientWrapperUnderTest.createDeal(input.deal);
+      expect(hubspotClientStub.deals.create).to.have.been.calledWith(input.deal);
+    });
+
+    it('updateDealById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        id: '1',
+        deal: {
+          anyKey: 'anyValue',
+        }
+      }
+      hubspotClientStub.deals.updateById.resolves({});
+      await clientWrapperUnderTest.updateDealById(input.id, input.deal);
+      expect(hubspotClientStub.deals.updateById).to.have.been.calledWith(+input.id, input.deal);
+    });
+
+    it('deleteDealById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const input = {
+        id: '1',
+      }
+      hubspotClientStub.deals.deleteById.resolves({});
+      await clientWrapperUnderTest.deleteDealById(input.id);
+      expect(hubspotClientStub.deals.deleteById).to.have.been.calledWith(+input.id);
+    });
   });
 
   describe('WorkflowAware', () => {
