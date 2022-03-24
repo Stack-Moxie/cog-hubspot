@@ -2,15 +2,15 @@ import * as grpc from 'grpc';
 import * as Hubspot from 'hubspot';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
-import { 
-  CompanyAwareMixin, 
-  ContactAwareMixin, 
-  DateAwareMixin, 
-  DealAwareMixin, 
-  MarketingEventAwareMixin, 
-  ProductAwareMixin, 
-  TicketAwareMixin, 
-  WorkflowAwareMixin 
+import {
+  CompanyAwareMixin,
+  ContactAwareMixin,
+  DateAwareMixin,
+  DealAwareMixin,
+  MarketingEventAwareMixin,
+  ProductAwareMixin,
+  TicketAwareMixin,
+  WorkflowAwareMixin,
 } from './mixins';
 
 class ClientWrapper {
@@ -68,7 +68,7 @@ applyMixins(ClientWrapper, [
   CompanyAwareMixin,
   DealAwareMixin,
   ProductAwareMixin,
-  MarketingEventAwareMixin
+  MarketingEventAwareMixin,
 ]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {

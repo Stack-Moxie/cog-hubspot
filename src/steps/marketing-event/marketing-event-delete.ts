@@ -12,11 +12,11 @@ export class DeleteMarketingEventStep extends BaseStep implements StepInterface 
   protected expectedFields: Field[] = [{
     field: 'externalEventId',
     type: FieldDefinition.Type.STRING,
-    description: `Marketing Event's External Event ID`,
+    description: "Marketing Event's External Event ID",
   }, {
     field: 'externalAccountId',
     type: FieldDefinition.Type.STRING,
-    description: `Marketing Event's External Account ID`,
+    description: "Marketing Event's External Account ID",
     optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
 
@@ -26,7 +26,7 @@ export class DeleteMarketingEventStep extends BaseStep implements StepInterface 
     fields: [{
       field: 'externalEventId',
       type: FieldDefinition.Type.STRING,
-      description: `Marketing Event's External Event ID`,
+      description: "Marketing Event's External Event ID",
     }, {
       field: 'createdAt',
       type: FieldDefinition.Type.DATETIME,

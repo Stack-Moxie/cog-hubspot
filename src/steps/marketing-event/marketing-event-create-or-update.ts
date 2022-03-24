@@ -12,11 +12,11 @@ export class CreateOrUpdateMarketingEventStep extends BaseStep implements StepIn
   protected expectedFields: Field[] = [{
     field: 'externalEventId',
     type: FieldDefinition.Type.STRING,
-    description: `Marketing Event's External Event ID`,
+    description: "Marketing Event's External Event ID",
   }, {
     field: 'externalAccountId',
     type: FieldDefinition.Type.STRING,
-    description: `Marketing Event's External Account ID`,
+    description: "Marketing Event's External Account ID",
     optionality: FieldDefinition.Optionality.OPTIONAL,
   }, {
     field: 'marketingEvent',
@@ -30,7 +30,7 @@ export class CreateOrUpdateMarketingEventStep extends BaseStep implements StepIn
     fields: [{
       field: 'externalEventId',
       type: FieldDefinition.Type.STRING,
-      description: `Marketing Event's External Event ID`,
+      description: "Marketing Event's External Event ID",
     }, {
       field: 'createdate',
       type: FieldDefinition.Type.DATETIME,
