@@ -207,6 +207,30 @@ class CachingClientWrapper {
     return await this.client.deleteProductById(id);
   }
 
+  public async createOrUpdateMarketingEvent(marketingEvent: Object, externalEventId: string, externalAccountId: string): Promise<Object> {
+    await this.clearCache();
+    return await this.client.createOrUpdateMarketingEvent(marketingEvent, externalEventId, externalAccountId);
+  }
+
+  public async deleteMarketingEventById(externalEventId: string = '', externalAccountId: string = ''): Promise<Object> {
+    await this.clearCache();
+    return await this.client.deleteMarketingEventById(externalEventId, externalAccountId);
+  }
+
+  public async getMarketingEventById(externalEventId: string = '', externalAccountId: string = ''): Promise<Object> {
+    const cachekey = `HubSpot|Product|${externalEventId}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getMarketingEventById(externalEventId, externalAccountId);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
   // all non-cached methods, just referencing the original function
   // -------------------------------------------------------------------
 

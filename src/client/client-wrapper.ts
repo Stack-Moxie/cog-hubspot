@@ -2,12 +2,16 @@ import * as grpc from 'grpc';
 import * as Hubspot from 'hubspot';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
-import { ContactAwareMixin, WorkflowAwareMixin } from './mixins';
-import { CompanyAwareMixin } from './mixins/company-aware';
-import { DateAwareMixin } from './mixins/date-aware';
-import { DealAwareMixin } from './mixins/deal-aware';
-import { ProductAwareMixin } from './mixins/product-aware';
-import { TicketAwareMixin } from './mixins/ticket-aware';
+import { 
+  CompanyAwareMixin, 
+  ContactAwareMixin, 
+  DateAwareMixin, 
+  DealAwareMixin, 
+  MarketingEventAwareMixin, 
+  ProductAwareMixin, 
+  TicketAwareMixin, 
+  WorkflowAwareMixin 
+} from './mixins';
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
@@ -53,7 +57,8 @@ interface ClientWrapper extends
   TicketAwareMixin,
   CompanyAwareMixin,
   DealAwareMixin,
-  ProductAwareMixin { }
+  ProductAwareMixin,
+  MarketingEventAwareMixin { }
 
 applyMixins(ClientWrapper, [
   ContactAwareMixin,
@@ -63,6 +68,7 @@ applyMixins(ClientWrapper, [
   CompanyAwareMixin,
   DealAwareMixin,
   ProductAwareMixin,
+  MarketingEventAwareMixin
 ]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
