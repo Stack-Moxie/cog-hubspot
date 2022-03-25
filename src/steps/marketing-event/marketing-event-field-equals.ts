@@ -110,8 +110,6 @@ export class MarketingEventFieldEquals extends BaseStep implements StepInterface
   public createRecord(marketingEvent): StepRecord {
     const obj = {};
     Object.keys(marketingEvent).forEach(key => obj[key] = marketingEvent[key]);
-    obj['createdAt'] = this.client.toDate(obj['createdAt']);
-    obj['updatedAt'] = this.client.toDate(obj['updatedAt']);
     const record = this.keyValue('marketingEvent', 'Checked Marketing Event', obj);
     return record;
   }
