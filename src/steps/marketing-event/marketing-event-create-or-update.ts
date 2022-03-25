@@ -73,8 +73,6 @@ export class CreateOrUpdateMarketingEventStep extends BaseStep implements StepIn
   public createRecord(marketingEvent): StepRecord {
     const obj = {};
     Object.keys(marketingEvent).forEach(key => obj[key] = marketingEvent[key]);
-    obj['createdAt'] = this.client.toDate(obj['createdAt']);
-    obj['updatedAt'] = this.client.toDate(obj['updatedAt']);
     const record = this.keyValue('marketingEvent', 'Created MarketingEvent', obj);
     return record;
   }
