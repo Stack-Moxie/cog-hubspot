@@ -89,11 +89,6 @@ export class MarketingEventFieldEquals extends BaseStep implements StepInterface
 
       let actual = value;
 
-      // Hubspot only accepts utc so you have to convert the date to local time again
-      const dateTokenFormat = /\d{4}-\d{2}-\d{2}(?:.?\d{2}:\d{2}:\d{2}.{4})Z?/;
-      if (dateTokenFormat.test(actual)) {
-        actual = moment.utc(actual).toDate().toISOString();
-      }
       const record = this.createRecord(marketingEvent);
       const result = this.assert(operator, actual, expectation, field);
 
