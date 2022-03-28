@@ -90,7 +90,7 @@ export class MarketingEventFieldEquals extends BaseStep implements StepInterface
       let actual = value;
 
       // Hubspot only returns UTC ISO
-      const dateTokenFormat = /\d{4}-\d{2}-\d{2}(?:.?\d{2}:\d{2}:\d{2}.{4})Z?/;
+      const dateTokenFormat = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)((-(\d{2}):(\d{2})|Z)?)$/;
       if (dateTokenFormat.test(actual)) {
         actual = actual.split('Z')[0];
       }
