@@ -60,7 +60,7 @@ export class CreateOrUpdateMarketingEventStep extends BaseStep implements StepIn
       const dateTokenFormat = /\d{4}-\d{2}-\d{2}(?:.?\d{2}:\d{2}:\d{2})?/;
       for (const key in stepData.marketingEvent) {
         if (dateTokenFormat.test(stepData.marketingEvent[key])) {
-          stepData.marketingEvent[key] = moment(stepData.marketingEvent[key]).toDate().toISOString();
+          stepData.marketingEvent[key] = `${stepData.marketingEvent[key]}Z`;
         }
       }
 
