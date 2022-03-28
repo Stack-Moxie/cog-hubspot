@@ -89,10 +89,10 @@ export class MarketingEventFieldEquals extends BaseStep implements StepInterface
 
       let actual = value;
 
-      // Hubspot only returns UTC
-      const dateTokenFormat = /\d{4}-\d{2}-\d{2}(?:.?\d{2}:\d{2}:\d{2})?/;
-      if (dateTokenFormat.test(expectation)) {
-        actual = `${actual}Z`;
+      // Hubspot only returns UTC ISO
+      const dateTokenFormat = /\d{4}-\d{2}-\d{2}(?:.?\d{2}:\d{2}:\d{2}.{4})Z?/;
+      if (dateTokenFormat.test(actual)) {
+        actual = actual.split('Z')[0];
       }
       const record = this.createRecord(marketingEvent);
       const result = this.assert(operator, actual, expectation, field);
