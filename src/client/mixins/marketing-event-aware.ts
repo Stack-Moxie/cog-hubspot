@@ -14,7 +14,6 @@ export class MarketingEventAwareMixin {
       }).then((result) => {
         resolve(result);
       }, (error) => {
-        console.log(error);
         reject(error.message);
       });
     });
