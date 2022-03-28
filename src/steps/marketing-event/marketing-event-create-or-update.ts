@@ -2,6 +2,7 @@
 
 import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
 import { Step, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
+import * as moment from 'moment';
 
 export class CreateOrUpdateMarketingEventStep extends BaseStep implements StepInterface {
 
@@ -54,6 +55,14 @@ export class CreateOrUpdateMarketingEventStep extends BaseStep implements StepIn
       // in the query and path params
       marketingEvent['externalEventId'] = externalEventId;
       marketingEvent['externalAccountId'] = externalAccountId;
+
+      // Hubspot only accepts UTC
+      const dateTokenFormat = /\d{4}-\d{2}-\d{2}(?:.?\d{2}:\d{2}:\d{2})?/;
+      for (const key in stepData.marketingEvent) {
+        if (dateTokenFormat.test(stepData.marketingEvent[key])) {
+          stepData.marketingEvent[key] = moment(stepData.marketingEvent[key]).toDate().toISOString();
+        }
+      }
 
       const data = await this.client.createOrUpdateMarketingEvent(marketingEvent, externalEventId, externalAccountId);
 
