@@ -115,8 +115,11 @@ describe('ClientWrapper', () => {
           update: sinon.stub(),
           delete: sinon.stub(),
         },
+        apiRequest: sinon.stub(),
       };
-      hubspotConstructorStub = sinon.stub();
+      hubspotClientStub.apiRequest.returns(Promise.resolve());
+      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then.resolves();
       hubspotConstructorStub.returns(hubspotClientStub)
     });
 
@@ -138,6 +141,16 @@ describe('ClientWrapper', () => {
       });
       await clientWrapperUnderTest.getContactById(sampleId);
       expect(hubspotClientStub.contacts.getById).to.have.been.calledWith(sampleId);
+    });
+
+    it('getContactListById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleId = '123123123';
+      await clientWrapperUnderTest.getContactListById(sampleId);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'GET',
+        path: `/contacts/v1/lists/${sampleId}/contacts/all?count=100`,
+      });
     });
 
     it('createOrUpdateContact', async () => {

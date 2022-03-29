@@ -18,6 +18,7 @@ describe('CachingClientWrapper', () => {
     clientWrapperStub = {
       getContactByEmail: sinon.spy(),
       getContactById: sinon.spy(),
+      getContactListById: sinon.spy(),
       deleteContactByEmail: sinon.spy(),
       deleteContactById: sinon.spy(),
       findWorkflowByName: sinon.spy(),
@@ -90,6 +91,34 @@ describe('CachingClientWrapper', () => {
     let actualCachedValue: string;
     (async () => {
       actualCachedValue = await cachingClientWrapperUnderTest.getContactById(expectedId);
+    })();
+
+    setTimeout(() => {
+      expect(clientWrapperStub.getContactById).to.not.have.been.called;
+      expect(actualCachedValue).to.equal('expectedCachedValue');
+      done();
+    });
+  });
+
+  it('getContactListById using original function', (done) => {
+    const expectedId = '123123';
+    cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
+    cachingClientWrapperUnderTest.getAsync = sinon.stub().returns(false);
+    cachingClientWrapperUnderTest.getContactListById(expectedId);
+
+    setTimeout(() => {
+      expect(clientWrapperStub.getContactListById).to.have.been.calledWith(expectedId);
+      done();
+    });
+  });
+
+  it('getContactListById using cache', (done) => {
+    const expectedId = '123123';
+    cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
+    cachingClientWrapperUnderTest.getAsync = sinon.stub().returns('"expectedCachedValue"');
+    let actualCachedValue: string;
+    (async () => {
+      actualCachedValue = await cachingClientWrapperUnderTest.getContactListById(expectedId);
     })();
 
     setTimeout(() => {
