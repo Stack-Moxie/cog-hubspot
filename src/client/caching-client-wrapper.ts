@@ -41,6 +41,20 @@ class CachingClientWrapper {
     return result;
   }
 
+  public async getContactListById(id: string, offSet: string = null) {
+    const cachekey = `HubSpot|ContactList|${id}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getContactListById(id, offSet);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
   public async createOrUpdateContact(email, contact) {
     await this.clearCache();
     return await this.client.createOrUpdateContact(email, contact);

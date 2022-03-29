@@ -26,6 +26,31 @@ export class ContactAwareMixin {
     });
   }
 
+  public async getContactListById(id: string, offSet: string = null): Promise<Object> {
+    await this.clientReady;
+    return new Promise((resolve, reject) => {
+      this.client.apiRequest({
+        method: 'GET',
+        path: `/contacts/v1/lists/${id}/contacts/all?count=100${offSet ? `$vidOffset=${offSet}` : ''}`,
+      }).then((result) => {
+        resolve(result);
+      }, (error) => {
+        reject(error.message);
+      });
+    });
+  }
+
+  public async getContactLists(): Promise<Object> {
+    await this.clientReady;
+    return new Promise((resolve, reject) => {
+      this.client.lists.get().then((result) => {
+        resolve(result);
+      }, (error) => {
+        reject(error.message);
+      });
+    });
+  }
+
   public async createOrUpdateContact(email: string, contact: Object): Promise<Object> {
     await this.clientReady;
     return new Promise((resolve, reject) => {
