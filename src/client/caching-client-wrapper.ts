@@ -245,6 +245,20 @@ class CachingClientWrapper {
     return result;
   }
 
+  public async getQuoteById(id: string): Promise<Object> {
+    const cachekey = `HubSpot|Quote|${id}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getQuoteById(id);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
   // all non-cached methods, just referencing the original function
   // -------------------------------------------------------------------
 

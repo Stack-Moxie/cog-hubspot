@@ -9,6 +9,7 @@ import {
   DealAwareMixin,
   MarketingEventAwareMixin,
   ProductAwareMixin,
+  QuoteAwareMixin,
   TicketAwareMixin,
   WorkflowAwareMixin,
 } from './mixins';
@@ -58,7 +59,8 @@ interface ClientWrapper extends
   CompanyAwareMixin,
   DealAwareMixin,
   ProductAwareMixin,
-  MarketingEventAwareMixin { }
+  MarketingEventAwareMixin,
+  QuoteAwareMixin { }
 
 applyMixins(ClientWrapper, [
   ContactAwareMixin,
@@ -69,6 +71,7 @@ applyMixins(ClientWrapper, [
   DealAwareMixin,
   ProductAwareMixin,
   MarketingEventAwareMixin,
+  QuoteAwareMixin,
 ]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {

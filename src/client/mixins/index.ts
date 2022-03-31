@@ -6,3 +6,4 @@ export * from './marketing-event-aware';
 export * from './product-aware';
 export * from './ticket-aware';
 export * from './deal-aware';
+export * from './quote-aware';
