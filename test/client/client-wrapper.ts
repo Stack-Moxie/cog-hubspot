@@ -262,6 +262,29 @@ describe('ClientWrapper', () => {
     });
   });
 
+  describe('QuoteAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        apiRequest: sinon.stub(),
+      };
+      hubspotClientStub.apiRequest.returns(Promise.resolve());
+      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then.resolves();
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('getQuoteById', async () => {
+      const sampleId = '123123'
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      await clientWrapperUnderTest.getQuoteById(sampleId);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'GET',
+        path: `/crm/v3/objects/quotes/${sampleId}`,
+      });
+    });
+  });
+
   describe('MarketingEventAware', () => {
     beforeEach(() => {
       hubspotClientStub = {
