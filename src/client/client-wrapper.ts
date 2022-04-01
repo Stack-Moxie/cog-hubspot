@@ -3,8 +3,10 @@ import * as Hubspot from 'hubspot';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 import {
+  AssociationAwareMixin,
   CompanyAwareMixin,
   ContactAwareMixin,
+  ContactListAwareMixin,
   DateAwareMixin,
   DealAwareMixin,
   MarketingEventAwareMixin,
@@ -60,7 +62,9 @@ interface ClientWrapper extends
   DealAwareMixin,
   ProductAwareMixin,
   MarketingEventAwareMixin,
-  QuoteAwareMixin { }
+  QuoteAwareMixin,
+  AssociationAwareMixin,
+  ContactListAwareMixin { }
 
 applyMixins(ClientWrapper, [
   ContactAwareMixin,
@@ -72,6 +76,8 @@ applyMixins(ClientWrapper, [
   ProductAwareMixin,
   MarketingEventAwareMixin,
   QuoteAwareMixin,
+  AssociationAwareMixin,
+  ContactListAwareMixin,
 ]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {

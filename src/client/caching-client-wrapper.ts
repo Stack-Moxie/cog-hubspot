@@ -41,20 +41,6 @@ class CachingClientWrapper {
     return result;
   }
 
-  public async getContactListById(id: string, offSet: string = null) {
-    const cachekey = `HubSpot|ContactList|${id}|${this.cachePrefix}`;
-    const stored = await this.getCache(cachekey);
-    if (stored) {
-      return stored;
-    }
-
-    const result = await this.client.getContactListById(id, offSet);
-    if (result) {
-      await this.setCache(cachekey, result);
-    }
-    return result;
-  }
-
   public async createOrUpdateContact(email, contact) {
     await this.clearCache();
     return await this.client.createOrUpdateContact(email, contact);
@@ -257,6 +243,58 @@ class CachingClientWrapper {
       await this.setCache(cachekey, result);
     }
     return result;
+  }
+
+  public async getAssociationById(id, string, fromObjectType: string, toObjectType: string): Promise<Object> {
+    const cachekey = `HubSpot|Association|${fromObjectType}|${toObjectType}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getAssociationById(id, fromObjectType, toObjectType);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
+  public async getContactsInContactListById(id: string, offSet: string = null) {
+    const cachekey = `HubSpot|ContactList|${id}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getContactsInContactListById(id, offSet);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
+  public async createContactList(data: Record<string, any>): Promise<Object> {
+    await this.clearCache();
+    return await this.client.createContactList(data);
+  }
+
+  public async updateContactListById(id: string, data: Record<string, any>): Promise<Object> {
+    await this.clearCache();
+    return await this.client.updateContactListById(id, data);
+  }
+
+  public async deleteContactListById(id: string): Promise<Object> {
+    await this.clearCache();
+    return await this.client.deleteContactListById(id);
+  }
+  
+  public async getContactListById(id: string): Promise<Object> {
+    await this.clearCache();
+    return await this.client.getContactListById(id);
+  }
+  public async addContactToContactList(listId: string, contactId: string, contactEmail: string): Promise<Object> {
+    await this.clearCache();
+    return await this.client.addContactToContactList(listId, contactId, contactEmail);
   }
 
   // all non-cached methods, just referencing the original function

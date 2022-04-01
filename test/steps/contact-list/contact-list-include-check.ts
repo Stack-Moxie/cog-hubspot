@@ -6,7 +6,7 @@ import * as sinonChai from 'sinon-chai';
 import 'mocha';
 
 import { Step as ProtoStep, StepDefinition, FieldDefinition, RunStepResponse } from '../../../src/proto/cog_pb';
-import { Step } from '../../../src/steps/contact/contact-list-include-check';
+import { Step } from '../../../src/steps/contact-list/contact-list-include-check';
 
 chai.use(sinonChai);
 
@@ -19,7 +19,7 @@ describe('ContactListIncludeStep', () => {
   beforeEach(() => {
     protoStep = new ProtoStep();
     clientWrapperStub = sinon.stub();
-    clientWrapperStub.getContactListById = sinon.stub();
+    clientWrapperStub.getContactsInContactListById = sinon.stub();
     stepUnderTest = new Step(clientWrapperStub);
   });
 
@@ -50,7 +50,7 @@ describe('ContactListIncludeStep', () => {
 
   describe('ExecuteStep', () => {
     describe('Expected Parameters', () => {
-      it('should call deleteContactByEmail with listId', async () => {
+      it('should call getContactsInContactListById with listId', async () => {
         const expectedlistId: string = '321';
         protoStep.setData(Struct.fromJavaScript({
           contactId: '123',
@@ -58,7 +58,7 @@ describe('ContactListIncludeStep', () => {
         }));
 
         await stepUnderTest.executeStep(protoStep);
-        expect(clientWrapperStub.getContactListById).to.have.been.calledWith(expectedlistId, null);
+        expect(clientWrapperStub.getContactsInContactListById).to.have.been.calledWith(expectedlistId);
       });
     });
 
@@ -70,7 +70,7 @@ describe('ContactListIncludeStep', () => {
           contactId: expectedContactId,
           listId: expectedlistId,
         }));
-        clientWrapperStub.getContactListById.returns(Promise.resolve({
+        clientWrapperStub.getContactsInContactListById.returns(Promise.resolve({
           contacts: [{
             vid: expectedContactId,
             properties: {
@@ -95,7 +95,7 @@ describe('ContactListIncludeStep', () => {
           contactId: expectedContactId,
           listId: expectedlistId,
         }));
-        clientWrapperStub.getContactListById.returns(Promise.resolve({
+        clientWrapperStub.getContactsInContactListById.returns(Promise.resolve({
           contacts: [{
             vid: '123123',
             properties: {
@@ -120,7 +120,7 @@ describe('ContactListIncludeStep', () => {
           contactId: expectedContactId,
           listId: expectedlistId,
         }));
-        clientWrapperStub.getContactListById.returns(Promise.reject('Error'));
+        clientWrapperStub.getContactsInContactListById.returns(Promise.reject('Error'));
       });
 
       it('should respond with error', async () => {

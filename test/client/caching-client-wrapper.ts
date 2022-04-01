@@ -19,6 +19,7 @@ describe('CachingClientWrapper', () => {
       getContactByEmail: sinon.spy(),
       getContactById: sinon.spy(),
       getContactListById: sinon.spy(),
+      getContactsInContactListById: sinon.spy(),
       deleteContactByEmail: sinon.spy(),
       deleteContactById: sinon.spy(),
       findWorkflowByName: sinon.spy(),
@@ -100,29 +101,29 @@ describe('CachingClientWrapper', () => {
     });
   });
 
-  it('getContactListById using original function', (done) => {
+  it('getContactsInContactListById using original function', (done) => {
     const expectedId = '123123';
     cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
     cachingClientWrapperUnderTest.getAsync = sinon.stub().returns(false);
-    cachingClientWrapperUnderTest.getContactListById(expectedId);
+    cachingClientWrapperUnderTest.getContactsInContactListById(expectedId);
 
     setTimeout(() => {
-      expect(clientWrapperStub.getContactListById).to.have.been.calledWith(expectedId);
+      expect(clientWrapperStub.getContactsInContactListById).to.have.been.calledWith(expectedId);
       done();
     });
   });
 
-  it('getContactListById using cache', (done) => {
+  it('getContactsInContactListById using cache', (done) => {
     const expectedId = '123123';
     cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
     cachingClientWrapperUnderTest.getAsync = sinon.stub().returns('"expectedCachedValue"');
     let actualCachedValue: string;
     (async () => {
-      actualCachedValue = await cachingClientWrapperUnderTest.getContactListById(expectedId);
+      actualCachedValue = await cachingClientWrapperUnderTest.getContactsInContactListById(expectedId);
     })();
 
     setTimeout(() => {
-      expect(clientWrapperStub.getContactById).to.not.have.been.called;
+      expect(clientWrapperStub.getContactsInContactListById).to.not.have.been.called;
       expect(actualCachedValue).to.equal('expectedCachedValue');
       done();
     });
