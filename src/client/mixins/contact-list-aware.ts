@@ -23,8 +23,8 @@ export class ContactListAwareMixin {
     return new Promise((resolve, reject) => {
       this.client.apiRequest({
         method: 'POST',
-        path: `/contacts/v1/lists`,
-        body: data
+        path: '/contacts/v1/lists',
+        body: data,
       }).then((result) => {
         resolve(result);
       }, (error) => {
@@ -39,7 +39,7 @@ export class ContactListAwareMixin {
       this.client.apiRequest({
         method: 'POST',
         path: `/contacts/v1/lists/${id}`,
-        body: data
+        body: data,
       }).then((result) => {
         resolve(result);
       }, (error) => {
@@ -84,12 +84,12 @@ export class ContactListAwareMixin {
         path: `/contacts/v1/lists/${listId}/add`,
         body: {
           vid: [
-            contactId
+            contactId,
           ],
           emails: [
-            contactEmail
-          ]
-        }
+            contactEmail,
+          ],
+        },
       }).then((result) => {
         resolve(result);
       }, (error) => {

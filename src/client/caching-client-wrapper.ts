@@ -287,7 +287,7 @@ class CachingClientWrapper {
     await this.clearCache();
     return await this.client.deleteContactListById(id);
   }
-  
+
   public async getContactListById(id: string): Promise<Object> {
     await this.clearCache();
     return await this.client.getContactListById(id);

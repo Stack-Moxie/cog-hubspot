@@ -36,7 +36,7 @@ export class CreateContactListStep extends BaseStep implements StepInterface {
 
     try {
       const data = await this.client.createContactList({
-        name
+        name,
       });
 
       const record = this.createRecord(data);

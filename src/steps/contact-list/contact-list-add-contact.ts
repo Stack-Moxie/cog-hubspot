@@ -41,7 +41,7 @@ export class AddContactToContactListStep extends BaseStep implements StepInterfa
 
     try {
 
-      const contact = await this.client.getContactById(contactId); 
+      const contact = await this.client.getContactById(contactId);
 
       const contactList = await this.client.getContactListById(listId);
 

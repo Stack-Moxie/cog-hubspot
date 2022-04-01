@@ -41,7 +41,7 @@ export class UpdateContactListStep extends BaseStep implements StepInterface {
 
     try {
       const data = await this.client.updateContactListById(id, {
-        name
+        name,
       });
       const record = this.createRecord(data);
       return this.pass('Successfully updated HubSpot contact list %s', [id], [record]);
