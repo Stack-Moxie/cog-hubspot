@@ -7,3 +7,5 @@ export * from './product-aware';
 export * from './ticket-aware';
 export * from './deal-aware';
 export * from './quote-aware';
+export * from './association-aware';
+export * from './contact-list-aware';

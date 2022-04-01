@@ -83,11 +83,7 @@ export class MarketingEventFieldEquals extends BaseStep implements StepInterface
         return this.error('Marketing Event does not have the property %s', [field]);
       }
 
-      // Since empty fields are not being returned by the API, default to undefined
-      // so that checks that are expected to fail will behave as expected
-      const value = marketingEvent[field];
-
-      let actual = value;
+      let actual = marketingEvent[field];
 
       // Hubspot only returns UTC ISO
       const dateTokenFormat = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)((-(\d{2}):(\d{2})|Z)?)$/;

@@ -143,16 +143,6 @@ describe('ClientWrapper', () => {
       expect(hubspotClientStub.contacts.getById).to.have.been.calledWith(sampleId);
     });
 
-    it('getContactListById', async () => {
-      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
-      const sampleId = '123123123';
-      await clientWrapperUnderTest.getContactListById(sampleId);
-      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
-        method: 'GET',
-        path: `/contacts/v1/lists/${sampleId}/contacts/all?count=100`,
-      });
-    });
-
     it('createOrUpdateContact', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const sampleEmail = 'anyEmail@any.com';
@@ -281,6 +271,128 @@ describe('ClientWrapper', () => {
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'GET',
         path: `/crm/v3/objects/quotes/${sampleId}`,
+      });
+    });
+  });
+
+  describe('AssociationAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        apiRequest: sinon.stub(),
+      };
+      hubspotClientStub.apiRequest.returns(Promise.resolve());
+      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then.resolves();
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('getAssociationById', async () => {
+      const sampleFromObject = '123123'
+      const sampleFromObjectId = '123123'
+      const sampleToObject = '123123'
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      await clientWrapperUnderTest.getAssociationById(sampleFromObjectId, sampleFromObject, sampleToObject);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'POST',
+        path: `/crm/v3/associations/${sampleFromObject}/${sampleToObject}/batch/read`,
+        body: {
+          inputs: [
+            {
+              id: sampleFromObjectId
+            }
+          ]
+        }
+      });
+    });
+  });
+
+  describe('ContactListAware', () => {
+    beforeEach(() => {
+      hubspotClientStub = {
+        apiRequest: sinon.stub(),
+      };
+      hubspotClientStub.apiRequest.returns(Promise.resolve());
+      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then.resolves();
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub)
+    });
+
+    it('getContactsInContactListById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const sampleId = '123123123';
+      await clientWrapperUnderTest.getContactsInContactListById(sampleId);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'GET',
+        path: `/contacts/v1/lists/${sampleId}/contacts/all?count=100`,
+      });
+    });
+
+    it('createContactList', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const name = 'anyName';
+      await clientWrapperUnderTest.createContactList({ name });
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'POST',
+        path: `/contacts/v1/lists`,
+        body: {
+          name
+        }
+      });
+    });
+
+    it('updateContactListById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const name = 'anyName';
+      const id = '123123'
+      await clientWrapperUnderTest.updateContactListById(id, { name });
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'POST',
+        path: `/contacts/v1/lists/${id}`,
+        body: {
+          name
+        }
+      });
+    });
+
+    it('deleteContactListById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const id = '123123'
+      await clientWrapperUnderTest.deleteContactListById(id);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'DELETE',
+        path: `/contacts/v1/lists/${id}`,
+      });
+    });
+    
+    it('getContactListById', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const id = '123123'
+      await clientWrapperUnderTest.getContactListById(id);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'GET',
+        path: `/contacts/v1/lists/${id}`,
+      });
+    });
+
+    it('addContactToContactList', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const contactId = '123123'
+      const contactEmail = 'anyEmail';
+      const listId = '123123'
+      await clientWrapperUnderTest.addContactToContactList(listId, contactId, contactEmail);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'POST',
+        path: `/contacts/v1/lists/${listId}/add`,
+        body: {
+          vid: [
+            contactId
+          ],
+          emails: [
+            contactEmail
+          ]
+        }
       });
     });
   });
