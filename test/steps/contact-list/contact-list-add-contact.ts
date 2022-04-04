@@ -20,7 +20,7 @@ describe('AddContactToContactListStep', () => {
     clientWrapperStub = sinon.stub();
     clientWrapperStub.getContactById = sinon.stub();
     clientWrapperStub.getContactListById = sinon.stub();
-    clientWrapperStub.createContactList = sinon.stub();
+    clientWrapperStub.addContactToContactList = sinon.stub();
     clientWrapperStub.toEpoch = sinon.stub();
     clientWrapperStub.toEpoch.returns(new Date().valueOf());
     clientWrapperStub.toDate = sinon.stub();
@@ -73,7 +73,7 @@ describe('AddContactToContactListStep', () => {
           name: 'anyName',
         });
 
-        clientWrapperStub.createContactList.resolves({});
+        clientWrapperStub.addContactToContactList.resolves({});
         
         protoStep.setData(Struct.fromJavaScript({
           contactId: '123123123', 
