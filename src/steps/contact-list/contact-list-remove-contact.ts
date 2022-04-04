@@ -3,10 +3,10 @@
 import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
 import { Step, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
 
-export class AddContactToContactListStep extends BaseStep implements StepInterface {
+export class RemoveContactToContactListStep extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Add a HubSpot Contact to Contact List';
-  protected stepExpression: string = 'add a hubspot contact to contact list';
+  protected stepName: string = 'Remove a HubSpot Contact to Contact List';
+  protected stepExpression: string = 'remove a hubspot contact to contact list';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
 
   protected expectedFields: Field[] = [{
@@ -40,18 +40,17 @@ export class AddContactToContactListStep extends BaseStep implements StepInterfa
     const listId: string = stepData.listId;
 
     try {
-
       const contact = await this.client.getContactById(contactId);
       const contactList = await this.client.getContactListById(listId);
-      await this.client.addContactToContactList(contactList['listId'], contact['vid'], contact.properties['email'].value);
+      await this.client.removeContactToContactList(listId, contactId);
 
-      return this.pass('Successfully added HubSpot contact %s to %s', [contact.properties['email'].value, contactList['name']]);
+      return this.pass('Successfully removed HubSpot contact %s to %s', [contact.properties['email'].value, contactList['name']]);
     } catch (e) {
-      return this.error('There was an error adding contact to contact list in HubSpot: %s', [
+      return this.error('There was an error removing contact to contact list in HubSpot: %s', [
         e.toString(),
       ]);
     }
   }
 }
 
-export { AddContactToContactListStep as Step };
+export { RemoveContactToContactListStep as Step };

@@ -39,6 +39,7 @@ export class CreateContactListStep extends BaseStep implements StepInterface {
         name,
       });
 
+      console.log(data);
       const record = this.createRecord(data);
       return this.pass('Successfully created HubSpot contact list', [], [record]);
     } catch (e) {

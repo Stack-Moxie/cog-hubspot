@@ -386,13 +386,29 @@ describe('ClientWrapper', () => {
         method: 'POST',
         path: `/contacts/v1/lists/${listId}/add`,
         body: {
-          vid: [
-            contactId
+          vids: [
+            +contactId
           ],
           emails: [
             contactEmail
           ]
         }
+      });
+    });
+
+    it('removeContactToContactList', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const contactId = '123123'
+      const listId = '123123'
+      await clientWrapperUnderTest.removeContactToContactList(listId, contactId);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'POST',
+        path: `/contacts/v1/lists/${listId}/remove`,
+        body: {
+          vids: [
+            +contactId,
+          ],
+        },
       });
     });
   });

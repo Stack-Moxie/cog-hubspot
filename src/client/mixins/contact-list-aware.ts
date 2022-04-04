@@ -83,11 +83,30 @@ export class ContactListAwareMixin {
         method: 'POST',
         path: `/contacts/v1/lists/${listId}/add`,
         body: {
-          vid: [
-            contactId,
+          vids: [
+            +contactId,
           ],
           emails: [
             contactEmail,
+          ],
+        },
+      }).then((result) => {
+        resolve(result);
+      }, (error) => {
+        reject(error.message);
+      });
+    });
+  }
+
+  public async removeContactToContactList(listId: string, contactId: string): Promise<Object> {
+    await this.clientReady;
+    return new Promise((resolve, reject) => {
+      this.client.apiRequest({
+        method: 'POST',
+        path: `/contacts/v1/lists/${listId}/remove`,
+        body: {
+          vids: [
+            +contactId,
           ],
         },
       }).then((result) => {
