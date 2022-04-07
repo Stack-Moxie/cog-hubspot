@@ -58,9 +58,10 @@ export class CreateOrUpdateContactStep extends BaseStep implements StepInterface
       const data = await this.client.createOrUpdateContact(email, contact);
       const createdContact = await this.client.getContactByEmail(email);
       const record = this.createRecord(createdContact);
+      const orderedRecord = this.createOrderedRecord(createdContact, stepData['__stepOrder']);
 
       if (data) {
-        return this.pass('Successfully created or updated HubSpot contact %s', [email], [record]);
+        return this.pass('Successfully created or updated HubSpot contact %s', [email], [record, orderedRecord]);
       } else {
         return this.fail('Unable to create or update HubSpot contact');
       }
@@ -77,6 +78,15 @@ export class CreateOrUpdateContactStep extends BaseStep implements StepInterface
     obj['createdate'] = this.client.toDate(obj['createdate']);
     obj['lastmodifieddate'] = this.client.toDate(obj['lastmodifieddate']);
     const record = this.keyValue('contact', 'Created Contact', obj);
+    return record;
+  }
+
+  public createOrderedRecord(contact, stepOrder = 1): StepRecord {
+    const obj = {};
+    Object.keys(contact.properties).forEach(key => obj[key] = contact.properties[key].value);
+    obj['createdate'] = this.client.toDate(obj['createdate']);
+    obj['lastmodifieddate'] = this.client.toDate(obj['lastmodifieddate']);
+    const record = this.keyValue(`contact.${stepOrder}`, `Created Contact from Step ${stepOrder}`, obj);
     return record;
   }
 }
