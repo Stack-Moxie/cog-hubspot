@@ -245,14 +245,14 @@ class CachingClientWrapper {
     return result;
   }
 
-  public async getAssociationById(id, string, fromObjectType: string, toObjectType: string): Promise<Object> {
+  public async getAssociationsById(id, string, fromObjectType: string, toObjectType: string): Promise<Object> {
     const cachekey = `HubSpot|Association|${fromObjectType}|${toObjectType}|${this.cachePrefix}`;
     const stored = await this.getCache(cachekey);
     if (stored) {
       return stored;
     }
 
-    const result = await this.client.getAssociationById(id, fromObjectType, toObjectType);
+    const result = await this.client.getAssociationsById(id, fromObjectType, toObjectType);
     if (result) {
       await this.setCache(cachekey, result);
     }

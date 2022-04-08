@@ -4,7 +4,7 @@ export class AssociationAwareMixin {
   clientReady: Promise<boolean>;
   client: hubspot.default;
 
-  public async getAssociationById(id: string, fromObjectType: string, toObjectType: string): Promise<Object> {
+  public async getAssociationsById(id: string, fromObjectType: string, toObjectType: string): Promise<Object> {
     await this.clientReady;
 
     return new Promise((resolve, reject) => {

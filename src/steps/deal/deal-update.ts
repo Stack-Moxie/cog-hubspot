@@ -56,8 +56,9 @@ export class UpdateDealStep extends BaseStep implements StepInterface {
       });
       const data = await this.client.updateDealById(id, deal);
       const record = this.createRecord(data);
+      const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
 
-      return this.pass('Successfully updated HubSpot deal %s', [id], [record]);
+      return this.pass('Successfully updated HubSpot deal %s', [id], [record, orderedRecord]);
     } catch (e) {
       return this.error('There was an error updating the deal in HubSpot: %s', [
         e.toString(),
@@ -70,6 +71,14 @@ export class UpdateDealStep extends BaseStep implements StepInterface {
     obj['id'] = deal.dealId;
     Object.keys(deal.properties).forEach(key => obj[key] = deal.properties[key].value);
     const record = this.keyValue('deal', 'Updated Deal', obj);
+    return record;
+  }
+
+  public createOrderedRecord(deal, stepOrder = 1): StepRecord {
+    const obj = {};
+    obj['id'] = deal.dealId;
+    Object.keys(deal.properties).forEach(key => obj[key] = deal.properties[key].value);
+    const record = this.keyValue(`deal.${stepOrder}`, `Updated Deal from Step ${stepOrder}`, obj);
     return record;
   }
 }

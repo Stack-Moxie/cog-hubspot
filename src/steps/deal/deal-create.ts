@@ -51,7 +51,9 @@ export class CreateDealStep extends BaseStep implements StepInterface {
       });
       const data = await this.client.createDeal(deal);
       const record = this.createRecord(data);
-      return this.pass('Successfully created HubSpot deal', [], [record]);
+      const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
+
+      return this.pass('Successfully created HubSpot deal', [], [record, orderedRecord]);
     } catch (e) {
       return this.error('There was an error creating the deal in HubSpot: %s', [
         e.toString(),
@@ -68,6 +70,14 @@ export class CreateDealStep extends BaseStep implements StepInterface {
     return record;
   }
 
+  public createOrderedRecord(deal, stepOrder = 1): StepRecord {
+    const obj = {};
+    obj['id'] = deal.dealId;
+    Object.keys(deal.properties).forEach(key => obj[key] = deal.properties[key].value);
+    const record = this.keyValue(`deal.${stepOrder}`, `Created Deal from Step ${stepOrder}`, obj);
+
+    return record;
+  }
 }
 
 export { CreateDealStep as Step };

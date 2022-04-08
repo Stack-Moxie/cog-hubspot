@@ -60,7 +60,9 @@ export class CreateTicketStep extends BaseStep implements StepInterface {
       });
       const data = await this.client.createTicket(ticket);
       const record = this.createRecord(data);
-      return this.pass('Successfully created HubSpot ticket', [], [record]);
+      const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
+
+      return this.pass('Successfully created HubSpot ticket', [], [record, orderedRecord]);
     } catch (e) {
       return this.error('There was an error creating the ticket in HubSpot: %s', [
         e.toString(),
@@ -73,6 +75,15 @@ export class CreateTicketStep extends BaseStep implements StepInterface {
     obj['id'] = ticket.id;
     Object.keys(ticket.properties).forEach(key => obj[key] = ticket.properties[key]);
     const record = this.keyValue('ticket', 'Created Ticket', obj);
+
+    return record;
+  }
+
+  public createOrderedRecord(ticket, stepOrder = 1): StepRecord {
+    const obj = {};
+    obj['id'] = ticket.id;
+    Object.keys(ticket.properties).forEach(key => obj[key] = ticket.properties[key]);
+    const record = this.keyValue(`ticket.${stepOrder}`, `Created Ticket from Step ${stepOrder}`, obj);
 
     return record;
   }
