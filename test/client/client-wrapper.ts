@@ -292,7 +292,7 @@ describe('ClientWrapper', () => {
       const sampleFromObjectId = '123123'
       const sampleToObject = '123123'
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
-      await clientWrapperUnderTest.getAssociationById(sampleFromObjectId, sampleFromObject, sampleToObject);
+      await clientWrapperUnderTest.getAssociationsById(sampleFromObjectId, sampleFromObject, sampleToObject);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'POST',
         path: `/crm/v3/associations/${sampleFromObject}/${sampleToObject}/batch/read`,

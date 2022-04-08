@@ -65,10 +65,10 @@ export class CreateOrUpdateMarketingEventStep extends BaseStep implements StepIn
       }
 
       const data = await this.client.createOrUpdateMarketingEvent(marketingEvent, externalEventId, externalAccountId);
-
       if (data) {
         const record = this.createRecord(data);
-        return this.pass('Successfully created or updated HubSpot marketing event %s', [externalEventId], [record]);
+        const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
+        return this.pass('Successfully created or updated HubSpot marketing event %s', [externalEventId], [record, orderedRecord]);
       } else {
         return this.fail('Unable to create or update HubSpot marketing event');
       }
@@ -82,7 +82,14 @@ export class CreateOrUpdateMarketingEventStep extends BaseStep implements StepIn
   public createRecord(marketingEvent): StepRecord {
     const obj = {};
     Object.keys(marketingEvent).forEach(key => obj[key] = marketingEvent[key]);
-    const record = this.keyValue('marketingEvent', 'Created MarketingEvent', obj);
+    const record = this.keyValue('marketingEvent', 'Created or Updated Marketing Event', obj);
+    return record;
+  }
+
+  public createOrderedRecord(marketingEvent, stepOrder = 1): StepRecord {
+    const obj = {};
+    Object.keys(marketingEvent).forEach(key => obj[key] = marketingEvent[key]);
+    const record = this.keyValue(`marketingEvent.${stepOrder}`, `Created or Updated Marketing Event from Step ${stepOrder}`, obj);
     return record;
   }
 }

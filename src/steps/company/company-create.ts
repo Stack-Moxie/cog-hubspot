@@ -69,6 +69,15 @@ export class CreateCompanyStep extends BaseStep implements StepInterface {
     return record;
   }
 
+  public createOrderedRecord(company, stepOrder = 1): StepRecord {
+    const obj = {};
+    obj['id'] = company.companyId;
+    Object.keys(company.properties).forEach(key => obj[key] = company.properties[key].value);
+    const record = this.keyValue(`company.${stepOrder}`, `Created Company from Step ${stepOrder}`, obj);
+
+    return record;
+  }
+
 }
 
 export { CreateCompanyStep as Step };

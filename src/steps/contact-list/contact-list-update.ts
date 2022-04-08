@@ -44,7 +44,9 @@ export class UpdateContactListStep extends BaseStep implements StepInterface {
         name,
       });
       const record = this.createRecord(data);
-      return this.pass('Successfully updated HubSpot contact list %s', [id], [record]);
+      const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
+
+      return this.pass('Successfully updated HubSpot contact list %s', [id], [record, orderedRecord]);
     } catch (e) {
       return this.error('There was an error updating the contact list in HubSpot: %s', [
         e.toString(),
@@ -53,6 +55,16 @@ export class UpdateContactListStep extends BaseStep implements StepInterface {
   }
 
   public createRecord(contactList): StepRecord {
+    const obj = {};
+    obj['id'] = contactList.listId;
+    Object.keys(contactList).forEach(key => obj[key] = contactList[key]);
+    obj['createdAt'] = this.client.toDate(obj['createdAt']);
+    obj['updatedAt'] = this.client.toDate(obj['updatedAt']);
+    const record = this.keyValue('contactList', 'Updated Contact List', obj);
+    return record;
+  }
+
+  public createOrderedRecord(contactList, stepOrder = 1): StepRecord {
     const obj = {};
     obj['id'] = contactList.listId;
     Object.keys(contactList).forEach(key => obj[key] = contactList[key]);
