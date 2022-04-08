@@ -56,8 +56,9 @@ export class UpdateProductStep extends BaseStep implements StepInterface {
 
       const data = await this.client.updateProductById(id, product);
       const record = this.createRecord(data);
+      const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
 
-      return this.pass('Successfully updated HubSpot product %s', [id], [record]);
+      return this.pass('Successfully updated HubSpot product %s', [id], [record, orderedRecord]);
     } catch (e) {
       return this.error('There was an error updating the product in HubSpot: %s', [
         e.toString(),
