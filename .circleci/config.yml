@@ -32,7 +32,7 @@ executors:
     environment:
       IMAGE_NAME: automatoninc/hubspot
     machine:
-      image: circleci/classic:latest
+      image: ubuntu-2004:202201-02
 
 jobs:
   test:
