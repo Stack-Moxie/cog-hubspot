@@ -4,7 +4,7 @@ description: >
   step is working as expected.
 
 tokens:
-  test.email: workflow.validate.test@automatoninc.com
+  test.email: workflow.validate.test.3@automatoninc.com
   expected.wname: MQL and Email
   expected.wid: 7267160
 
