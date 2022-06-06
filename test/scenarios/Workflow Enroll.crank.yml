@@ -4,7 +4,7 @@ description: >
   is working as expected.
 
 tokens:
-  test.email: workflow.enroll.test.2@automatoninc.com
+  test.email: workflow.enroll.test.3@automatoninc.com
   test.workflow: MQL and Email
   expected.stage: marketingqualifiedlead
 
