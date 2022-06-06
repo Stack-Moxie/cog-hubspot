@@ -4,7 +4,7 @@ description: >
   is working as expected.
 
 tokens:
-  test.email: workflow.enroll.test@automatoninc.com
+  test.email: workflow.enroll.test.2@automatoninc.com
   test.workflow: MQL and Email
   expected.stage: marketingqualifiedlead
 
@@ -16,5 +16,5 @@ steps:
       lifecyclestage: lead
 - step: When I enroll the {{test.email}} HubSpot Contact into workflow {{test.workflow}}
 - step: Then the lifecyclestage field on HubSpot Contact {{test.email}} should be {{expected.stage}}
-  failAfter: 60
+  failAfter: 90
 - step: Finally, delete the {{test.email}} HubSpot Contact
