@@ -4,9 +4,9 @@ description: >
   step is working as expected.
 
 tokens:
-  test.email: workflow.validate.test.3@automatoninc.com
+  test.email: workflow.validate.test@automatoninc.com
   expected.wname: MQL and Email
-  expected.wid: 7267160
+  expected.wid: 34682314
 
 steps:
 - step: Given I create or update a HubSpot Contact
