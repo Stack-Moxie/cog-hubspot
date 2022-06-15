@@ -11,7 +11,7 @@ tokens:
     submit: input[type=submit]
 
 steps:
-- step: Given I navigate to https://automaton-dev-6187889-6187889.hs-sites.com/become-an-automaton-test-hubspot-contact#
+- step: Given I navigate to http://21266784.hs-sites.com/en/cogtestscenario
 - step: When I fill out input[name=firstname] with {{test.firstname}}
 - step: And I fill out input[name=lastname] with {{test.lastname}}
 - step: And I fill out input[name=email] with {{test.email}}
