@@ -292,6 +292,7 @@ class CachingClientWrapper {
     await this.clearCache();
     return await this.client.getContactListById(id);
   }
+
   public async addContactToContactList(listId: string, contactId: string, contactEmail: string): Promise<Object> {
     await this.clearCache();
     return await this.client.addContactToContactList(listId, contactId, contactEmail);
