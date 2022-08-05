@@ -7,24 +7,14 @@ import { baseOperators } from '../../client/contants/operators';
 
 export class ContactListMemberCountStep extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Check the number of a Hubspot Contact List Members';
+  protected stepName: string = 'Count a HubSpot List';
   // tslint:disable-next-line:max-line-length
-  protected stepExpression: string = 'the number of members from hubspot contact list (?<listId>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?';
+  protected stepExpression: string = 'check the number of members from hubspot contact list (?<listId>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected expectedFields: Field[] = [{
     field: 'listId',
     type: FieldDefinition.Type.STRING,
     description: "Contact List's Id",
-  }, {
-    field: 'operator',
-    type: FieldDefinition.Type.STRING,
-    optionality: FieldDefinition.Optionality.OPTIONAL,
-    description: 'Check Logic (be, not be, contain, not contain, be greater than, be less than, be set, not be set, be one of, or not be one of)',
-  }, {
-    field: 'expectation',
-    type: FieldDefinition.Type.ANYSCALAR,
-    optionality: FieldDefinition.Optionality.OPTIONAL,
-    description: 'Expected field value',
   }];
 
   protected expectedRecords: ExpectedRecord[] = [{
@@ -45,8 +35,6 @@ export class ContactListMemberCountStep extends BaseStep implements StepInterfac
   async executeStep(step: Step) {
     const stepData: any = step.getData() ? step.getData().toJavaScript() : {};
     const listId = stepData.listId;
-    const operator = stepData.operator || 'be';
-    const expectation = stepData.expectation;
 
     let contacts = [];
     let hasMore = true;
@@ -55,28 +43,16 @@ export class ContactListMemberCountStep extends BaseStep implements StepInterfac
     try {
       while (hasMore) {
         const response = await this.client.getContactsInContactListById(listId, vidOffset);
-        console.log(response);
         contacts = contacts.concat(response.contacts);
         hasMore = response['has-more'];
         vidOffset = response['vid-offset'];
       }
 
       const record = this.createRecord(listId, contacts.length);
-      const result = this.assert(operator, contacts.length.toString(), expectation, 'member count');
-
-      result.message = result.message.replace(' field', '');
-      return result.valid ? this.pass(result.message, [], [record])
-        : this.fail(result.message, [], [record]);
-
+      const orderedRecord = this.createOrderedRecord(listId, contacts.length, stepData['__stepOrder']);
+      return this.pass('Contact List %s has %s members', [listId, contacts.length.toString()], [record, orderedRecord]);
     } catch (e) {
-      if (e instanceof util.UnknownOperatorError) {
-        return this.error('%s Please provide one of: %s', [e.message, baseOperators.join(', ')]);
-      }
-      if (e instanceof util.InvalidOperandError) {
-        return this.error('There was an error checking the contact field: %s', [e.message]);
-      }
-
-      return this.error('There was an error checking the contact field: %s', [e.toString()]);
+      return this.error('There was an error checking the contact member count: %s', [e.toString()]);
     }
   }
 
@@ -86,6 +62,14 @@ export class ContactListMemberCountStep extends BaseStep implements StepInterfac
       listMemberCount: count,
     };
     return this.keyValue('contactList', 'Checked Contact List Member Count', record);
+  }
+
+  createOrderedRecord(id: string, count: number, stepOrder = 1) {
+    const record = {
+      listId: id,
+      listMemberCount: count,
+    };
+    return this.keyValue(`contactList.${stepOrder}`, `Checked Contact List Member Count from Step ${stepOrder}`, record);
   }
 }
 

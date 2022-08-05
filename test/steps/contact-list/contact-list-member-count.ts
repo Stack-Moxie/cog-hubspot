@@ -27,8 +27,8 @@ describe('ContactListMemberCountStep', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('ContactListMemberCountStep');
-      expect(stepDef.getName()).to.equal('Check the number of a Hubspot Contact List Members');
-      expect(stepDef.getExpression()).to.equal('the number of members from hubspot contact list (?<listId>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?');
+      expect(stepDef.getName()).to.equal('Count a HubSpot List');
+      expect(stepDef.getExpression()).to.equal('check the number of members from hubspot contact list (?<listId>.+)');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
     });
 
@@ -41,14 +41,6 @@ describe('ContactListMemberCountStep', () => {
       expect(fields[0].key).to.equal('listId');
       expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
       expect(fields[0].type).to.equal(FieldDefinition.Type.STRING);
-
-      expect(fields[1].key).to.equal('operator');
-      expect(fields[1].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
-      expect(fields[1].type).to.equal(FieldDefinition.Type.STRING);
-
-      expect(fields[2].key).to.equal('expectation');
-      expect(fields[2].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
-      expect(fields[2].type).to.equal(FieldDefinition.Type.ANYSCALAR);
     });
   });
 
@@ -58,8 +50,6 @@ describe('ContactListMemberCountStep', () => {
         const expectedlistId: string = '321';
         protoStep.setData(Struct.fromJavaScript({
           listId: expectedlistId,
-          operator: 'be',
-          expectation: '2',
         }));
 
         await stepUnderTest.executeStep(protoStep);
@@ -67,13 +57,11 @@ describe('ContactListMemberCountStep', () => {
       });
     });
 
-    describe('Contact list Member Count is same as expected', () => {
+    describe('Contact list exists', () => {
       beforeEach(() => {
         const expectedlistId: string = '321';
         protoStep.setData(Struct.fromJavaScript({
           listId: expectedlistId,
-          operator: 'be',
-          expectation: '2',
         }));
         clientWrapperStub.getContactsInContactListById.returns(Promise.resolve({
           contacts: [{
@@ -98,44 +86,11 @@ describe('ContactListMemberCountStep', () => {
       });
     });
 
-    describe('Contact list Member Count is not same as expected', () => {
-      beforeEach(() => {
-        const expectedlistId: string = '321';
-        protoStep.setData(Struct.fromJavaScript({
-          listId: expectedlistId,
-          operator: 'be',
-          expectation: '3',
-        }));
-        clientWrapperStub.getContactsInContactListById.returns(Promise.resolve({
-          contacts: [{
-            vid: '123',
-            properties: {
-              createdate: { value: new Date().valueOf() },
-              lastmodifieddate: { value: new Date().valueOf() },
-            },
-          }, {
-            vid: '123',
-            properties: {
-              createdate: { value: new Date().valueOf() },
-              lastmodifieddate: { value: new Date().valueOf() },
-            },
-          }],
-        }));
-      });
-
-      it('should respond with fail', async () => {
-        const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
-        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
-      });
-    });
-
     describe('Error occurred', () => {
       beforeEach(() => {
         const expectedlistId: string = '321';
         protoStep.setData(Struct.fromJavaScript({
           listId: expectedlistId,
-          operator: 'be',
-          expectation: '3',
         }));
         clientWrapperStub.getContactsInContactListById.returns(Promise.reject('Error'));
       });
