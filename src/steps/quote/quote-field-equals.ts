@@ -73,11 +73,11 @@ export class QuoteFieldEquals extends BaseStep implements StepInterface {
           this.client.toDate(quote.properties[field]) : quote.properties[field];
 
       quote['id'] = id;
-      const record = this.createRecord(quote, id);
+      const records = this.createRecords(quote, stepData['__stepOrder']);
       const result = this.assert(operator, actual, expectation, field);
 
-      return result.valid ? this.pass(result.message, [], [record])
-        : this.fail(result.message, [], [record]);
+      return result.valid ? this.pass(result.message, [], records)
+        : this.fail(result.message, [], records);
 
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
@@ -91,12 +91,17 @@ export class QuoteFieldEquals extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(quote, id): StepRecord {
+  public createRecords(quote, stepOrder = 1): StepRecord[] {
     const obj = {};
-    obj['id'] = id;
+    obj['id'] = quote.id;
     Object.keys(quote.properties).forEach(key => obj[key] = quote.properties[key]);
-    const record = this.keyValue('quote', 'Checked Quote', obj);
-    return record;
+
+    let records = [];
+    // Base Record
+    records.push(this.keyValue('quote', 'Checked Quote', obj));
+    // Ordered Record
+    records.push(this.keyValue(`quote.${stepOrder}`, `Checked Quote from Step ${stepOrder}`, obj));
+    return records;
   }
 }
 

@@ -90,11 +90,11 @@ export class MarketingEventFieldEquals extends BaseStep implements StepInterface
       if (dateTokenFormat.test(actual)) {
         actual = actual.split('Z')[0];
       }
-      const record = this.createRecord(marketingEvent);
+      const records = this.createRecords(marketingEvent, stepData['__stepOrder']);
       const result = this.assert(operator, actual, expectation, field);
 
-      return result.valid ? this.pass(result.message, [], [record])
-        : this.fail(result.message, [], [record]);
+      return result.valid ? this.pass(result.message, [], records)
+        : this.fail(result.message, [], records);
 
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
@@ -108,11 +108,16 @@ export class MarketingEventFieldEquals extends BaseStep implements StepInterface
     }
   }
 
-  public createRecord(marketingEvent): StepRecord {
+  public createRecords(marketingEvent, stepOrder = 1): StepRecord[] {
     const obj = {};
     Object.keys(marketingEvent).forEach(key => obj[key] = marketingEvent[key]);
-    const record = this.keyValue('marketingEvent', 'Checked Marketing Event', obj);
-    return record;
+
+    let records = [];
+    // Base Record
+    records.push(this.keyValue('marketingEvent', 'Checked Marketing Event', obj));
+    // Ordered Record
+    records.push(this.keyValue(`marketingEvent.${stepOrder}`, `Checked Marketing Event from Step ${stepOrder}`, obj));
+    return records;
   }
 }
 

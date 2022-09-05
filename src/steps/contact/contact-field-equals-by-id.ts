@@ -73,11 +73,11 @@ export class ContactFieldEqualsByIdStep extends BaseStep implements StepInterfac
 
       const actual = this.client.isDate(value) ? this.client.toDate(value) : value;
 
-      const record = this.createRecord(contact);
+      const records = this.createRecords(contact, stepData['__stepOrder']);
       const result = this.assert(operator, actual, expectation, field);
 
-      return result.valid ? this.pass(result.message, [], [record])
-        : this.fail(result.message, [], [record]);
+      return result.valid ? this.pass(result.message, [], records)
+        : this.fail(result.message, [], records);
 
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
@@ -91,13 +91,18 @@ export class ContactFieldEqualsByIdStep extends BaseStep implements StepInterfac
     }
   }
 
-  public createRecord(contact): StepRecord {
+  public createRecords(contact, stepOrder = 1): StepRecord[] {
     const obj = {};
     Object.keys(contact.properties).forEach(key => obj[key] = contact.properties[key].value);
     obj['createdate'] = this.client.toDate(obj['createdate']);
     obj['lastmodifieddate'] = this.client.toDate(obj['lastmodifieddate']);
-    const record = this.keyValue('contact', 'Checked Contact', obj);
-    return record;
+
+    let records = [];
+    // Base Record
+    records.push(this.keyValue('contact', 'Checked Contact', obj));
+    // Ordered Record
+    records.push(this.keyValue(`contact.${stepOrder}`, `Checked Contact from Step ${stepOrder}`, obj));
+    return records;
   }
 }
 
