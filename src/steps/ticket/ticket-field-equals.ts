@@ -100,7 +100,7 @@ export class TicketFieldEquals extends BaseStep implements StepInterface {
     obj['id'] = ticket.id;
     Object.keys(ticket.properties).forEach(key => obj[key] = ticket.properties[key]);
 
-    let records = [];
+    const records = [];
     // Base Record
     records.push(this.keyValue('quote', 'Checked Ticket', obj));
     // Ordered Record

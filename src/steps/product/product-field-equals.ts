@@ -88,7 +88,7 @@ export class ProductFieldEquals extends BaseStep implements StepInterface {
     obj['id'] = product.objectId;
     Object.keys(product.properties).forEach(key => obj[key] = product.properties[key].value);
 
-    let records = [];
+    const records = [];
     // Base Record
     records.push(this.keyValue('product', 'Checked Product', obj));
     // Ordered Record

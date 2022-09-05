@@ -89,7 +89,7 @@ export class CompanyFieldEquals extends BaseStep implements StepInterface {
     Object.keys(company.properties).forEach(key => obj[key] = company.properties[key].value);
     const record = this.keyValue('company', 'Checked Company', obj);
 
-    let records = [];
+    const records = [];
     // Base Record
     records.push(this.keyValue('company', 'Checked Company', obj));
     // Ordered Record

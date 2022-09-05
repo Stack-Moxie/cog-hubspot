@@ -112,7 +112,7 @@ export class MarketingEventFieldEquals extends BaseStep implements StepInterface
     const obj = {};
     Object.keys(marketingEvent).forEach(key => obj[key] = marketingEvent[key]);
 
-    let records = [];
+    const records = [];
     // Base Record
     records.push(this.keyValue('marketingEvent', 'Checked Marketing Event', obj));
     // Ordered Record

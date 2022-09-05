@@ -88,7 +88,7 @@ export class DealFieldEquals extends BaseStep implements StepInterface {
     obj['id'] = deal.dealId;
     Object.keys(deal.properties).forEach(key => obj[key] = deal.properties[key].value);
 
-    let records = [];
+    const records = [];
     // Base Record
     records.push(this.keyValue('deal', 'Checked Deal', obj));
     // Ordered Record

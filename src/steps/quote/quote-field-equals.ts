@@ -96,7 +96,7 @@ export class QuoteFieldEquals extends BaseStep implements StepInterface {
     obj['id'] = quote.id;
     Object.keys(quote.properties).forEach(key => obj[key] = quote.properties[key]);
 
-    let records = [];
+    const records = [];
     // Base Record
     records.push(this.keyValue('quote', 'Checked Quote', obj));
     // Ordered Record

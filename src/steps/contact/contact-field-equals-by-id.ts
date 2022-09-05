@@ -97,7 +97,7 @@ export class ContactFieldEqualsByIdStep extends BaseStep implements StepInterfac
     obj['createdate'] = this.client.toDate(obj['createdate']);
     obj['lastmodifieddate'] = this.client.toDate(obj['lastmodifieddate']);
 
-    let records = [];
+    const records = [];
     // Base Record
     records.push(this.keyValue('contact', 'Checked Contact', obj));
     // Ordered Record
