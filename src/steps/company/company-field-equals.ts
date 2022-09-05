@@ -65,11 +65,11 @@ export class CompanyFieldEquals extends BaseStep implements StepInterface {
           this.client.toDate(company.properties[field]) : company.properties[field];
 
       company['id'] = id;
-      const record = this.createRecord(company);
+      const records = this.createRecords(company, stepData['__stepOrder']);
       const result = this.assert(operator, actual.value, expectation, field);
 
-      return result.valid ? this.pass(result.message, [], [record])
-        : this.fail(result.message, [], [record]);
+      return result.valid ? this.pass(result.message, [], records)
+        : this.fail(result.message, [], records);
 
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
@@ -83,12 +83,18 @@ export class CompanyFieldEquals extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(company): StepRecord {
+  public createRecords(company, stepOrder = 1): StepRecord[] {
     const obj = {};
     obj['id'] = company.companyId;
     Object.keys(company.properties).forEach(key => obj[key] = company.properties[key].value);
     const record = this.keyValue('company', 'Checked Company', obj);
-    return record;
+
+    const records = [];
+    // Base Record
+    records.push(this.keyValue('company', 'Checked Company', obj));
+    // Ordered Record
+    records.push(this.keyValue(`company.${stepOrder}`, `Checked Company from Step ${stepOrder}`, obj));
+    return records;
   }
 }
 

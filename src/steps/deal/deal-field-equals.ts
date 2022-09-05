@@ -65,11 +65,11 @@ export class DealFieldEquals extends BaseStep implements StepInterface {
           this.client.toDate(deal.properties[field]) : deal.properties[field];
 
       deal['id'] = id;
-      const record = this.createRecord(deal);
+      const records = this.createRecords(deal, stepData['__stepOrder']);
       const result = this.assert(operator, actual.value, expectation, field);
 
-      return result.valid ? this.pass(result.message, [], [record])
-        : this.fail(result.message, [], [record]);
+      return result.valid ? this.pass(result.message, [], records)
+        : this.fail(result.message, [], records);
 
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
@@ -83,12 +83,17 @@ export class DealFieldEquals extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(deal): StepRecord {
+  public createRecords(deal, stepOrder = 1): StepRecord[] {
     const obj = {};
     obj['id'] = deal.dealId;
     Object.keys(deal.properties).forEach(key => obj[key] = deal.properties[key].value);
-    const record = this.keyValue('deal', 'Checked Deal', obj);
-    return record;
+
+    const records = [];
+    // Base Record
+    records.push(this.keyValue('deal', 'Checked Deal', obj));
+    // Ordered Record
+    records.push(this.keyValue(`deal.${stepOrder}`, `Checked Deal from Step ${stepOrder}`, obj));
+    return records;
   }
 }
 

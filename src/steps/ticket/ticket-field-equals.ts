@@ -77,11 +77,11 @@ export class TicketFieldEquals extends BaseStep implements StepInterface {
           this.client.toDate(ticket.properties[field]) : ticket.properties[field];
 
       ticket['id'] = id;
-      const record = this.createRecord(ticket);
+      const records = this.createRecords(ticket, stepData['__stepOrder']);
       const result = this.assert(operator, actual, expectation, field);
 
-      return result.valid ? this.pass(result.message, [], [record])
-        : this.fail(result.message, [], [record]);
+      return result.valid ? this.pass(result.message, [], records)
+        : this.fail(result.message, [], records);
 
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
@@ -95,12 +95,17 @@ export class TicketFieldEquals extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(ticket): StepRecord {
+  public createRecords(ticket, stepOrder = 1): StepRecord[] {
     const obj = {};
     obj['id'] = ticket.id;
     Object.keys(ticket.properties).forEach(key => obj[key] = ticket.properties[key]);
-    const record = this.keyValue('ticket', 'Checked Ticket', obj);
-    return record;
+
+    const records = [];
+    // Base Record
+    records.push(this.keyValue('quote', 'Checked Ticket', obj));
+    // Ordered Record
+    records.push(this.keyValue(`quote.${stepOrder}`, `Checked Ticket from Step ${stepOrder}`, obj));
+    return records;
   }
 }
 
