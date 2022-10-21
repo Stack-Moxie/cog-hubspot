@@ -66,7 +66,7 @@ export class ProductFieldEquals extends BaseStep implements StepInterface {
 
       product['id'] = id;
       const records = this.createRecords(product, stepData['__stepOrder']);
-      const result = this.assert(operator, actual, expectation, field);
+      const result = this.assert(operator, actual, expectation, field, stepData['__piiSuppressionLevel']);
 
       return result.valid ? this.pass(result.message, [], records)
         : this.fail(result.message, [], records);

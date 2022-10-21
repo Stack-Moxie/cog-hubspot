@@ -66,7 +66,7 @@ export class DealFieldEquals extends BaseStep implements StepInterface {
 
       deal['id'] = id;
       const records = this.createRecords(deal, stepData['__stepOrder']);
-      const result = this.assert(operator, actual.value, expectation, field);
+      const result = this.assert(operator, actual.value, expectation, field, stepData['__piiSuppressionLevel']);
 
       return result.valid ? this.pass(result.message, [], records)
         : this.fail(result.message, [], records);

@@ -74,7 +74,7 @@ export class QuoteFieldEquals extends BaseStep implements StepInterface {
 
       quote['id'] = id;
       const records = this.createRecords(quote, stepData['__stepOrder']);
-      const result = this.assert(operator, actual, expectation, field);
+      const result = this.assert(operator, actual, expectation, field, stepData['__piiSuppressionLevel']);
 
       return result.valid ? this.pass(result.message, [], records)
         : this.fail(result.message, [], records);
