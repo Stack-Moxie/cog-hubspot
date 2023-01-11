@@ -5,9 +5,11 @@ import { Step, FieldDefinition, StepDefinition, StepRecord, RecordDefinition } f
 
 export class DeleteContactByIdStep extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Delete a HubSpot contact by Id';
+  protected stepName: string = 'Delete a HubSpot contact by ID';
   protected stepExpression: string = 'delete the hubspot contact with id (?<id>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['delete'];
+  protected targetObject: string = 'Contact by ID';
 
   protected expectedFields: Field[] = [{
     field: 'id',

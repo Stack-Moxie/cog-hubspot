@@ -5,10 +5,12 @@ import { Step, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } f
 
 export class ContactListIncludeStep extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Check if Hubspot Contact is included in Hubspot Contact List';
+  protected stepName: string = 'Check if Hubspot contact is included in Hubspot contact list';
   // tslint:disable-next-line:max-line-length
   protected stepExpression: string = 'the contact with id (?<contactId>.+) should be included in contact list with id (?<listId>.+)?';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
+  protected actionList: string[] = ['check'];
+  protected targetObject: string = 'Contact List';
   protected expectedFields: Field[] = [{
     field: 'contactId',
     type: FieldDefinition.Type.STRING,

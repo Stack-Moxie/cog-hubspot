@@ -9,6 +9,8 @@ export class CreateTicketStep extends BaseStep implements StepInterface {
   protected stepName: string = 'Create a HubSpot ticket';
   protected stepExpression: string = 'create a hubspot ticket';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['create'];
+  protected targetObject: string = 'Ticket';
 
   protected expectedFields: Field[] = [{
     field: 'ticket',

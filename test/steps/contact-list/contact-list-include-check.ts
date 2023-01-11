@@ -27,7 +27,7 @@ describe('ContactListIncludeStep', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('ContactListIncludeStep');
-      expect(stepDef.getName()).to.equal('Check if Hubspot Contact is included in Hubspot Contact List');
+      expect(stepDef.getName()).to.equal('Check if Hubspot contact is included in Hubspot contact list');
       expect(stepDef.getExpression()).to.equal('the contact with id (?<contactId>.+) should be included in contact list with id (?<listId>.+)?');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
     });

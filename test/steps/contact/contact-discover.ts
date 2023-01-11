@@ -30,7 +30,7 @@ describe('DiscoverContact', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('DiscoverContact');
-      expect(stepDef.getName()).to.equal('Discover fields on a HubSpot Contact');
+      expect(stepDef.getName()).to.equal('Discover fields on a HubSpot contact');
       expect(stepDef.getExpression()).to.equal('discover fields on hubspot contact (?<email>.+\@.+\..+)');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.ACTION);
     });

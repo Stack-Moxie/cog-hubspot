@@ -8,10 +8,12 @@ import { baseOperators } from '../../client/contants/operators';
 
 export class TicketFieldEquals extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Check a field on a HubSpot Ticket';
+  protected stepName: string = 'Check a field on a HubSpot ticket';
   // tslint:disable-next-line:max-line-length
   protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_-]+) field on hubspot ticket (?<id>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
+  protected actionList: string[] = ['check'];
+  protected targetObject: string = 'Ticket';
   protected expectedFields: Field[] = [{
     field: 'id',
     type: FieldDefinition.Type.STRING,
