@@ -36,7 +36,7 @@ describe('EnrollContactToWorkflowStep', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('EnrollContactToWorkflowStep');
-      expect(stepDef.getName()).to.equal('Enroll a HubSpot Contact into a Workflow');
+      expect(stepDef.getName()).to.equal('Enroll a HubSpot contact into a workflow');
       expect(stepDef.getExpression()).to.equal('enroll the (?<email>.+) hubspot contact into workflow (?<workflow>.+)');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.ACTION);
     });

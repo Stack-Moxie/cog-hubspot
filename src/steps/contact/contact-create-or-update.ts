@@ -8,6 +8,8 @@ export class CreateOrUpdateContactStep extends BaseStep implements StepInterface
   protected stepName: string = 'Create or update a HubSpot contact';
   protected stepExpression: string = 'create or update a hubspot contact';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['create', 'update'];
+  protected targetObject: string = 'Contact';
 
   protected expectedFields: Field[] = [{
     field: 'contact',

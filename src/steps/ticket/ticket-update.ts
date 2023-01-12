@@ -8,6 +8,8 @@ export class UpdateTicketStep extends BaseStep implements StepInterface {
   protected stepName: string = 'Update a HubSpot ticket';
   protected stepExpression: string = 'update a hubspot ticket';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['update'];
+  protected targetObject: string = 'Ticket';
 
   protected expectedFields: Field[] = [{
     field: 'id',

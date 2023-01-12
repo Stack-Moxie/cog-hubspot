@@ -9,6 +9,8 @@ export class CreateOrUpdateMarketingEventStep extends BaseStep implements StepIn
   protected stepName: string = 'Create or update a HubSpot marketing event';
   protected stepExpression: string = 'create or update a hubspot marketing event';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['create', 'update'];
+  protected targetObject: string = 'Marketing Event';
 
   protected expectedFields: Field[] = [{
     field: 'externalEventId',

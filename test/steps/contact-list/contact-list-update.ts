@@ -30,7 +30,7 @@ describe('UpdateContactListStep', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('UpdateContactListStep');
-      expect(stepDef.getName()).to.equal('Update a HubSpot Contact List');
+      expect(stepDef.getName()).to.equal('Update a HubSpot contact list');
       expect(stepDef.getExpression()).to.equal('update a hubspot contact list');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.ACTION);
     });

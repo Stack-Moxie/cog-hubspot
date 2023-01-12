@@ -27,7 +27,7 @@ describe('ContactListMemberCountStep', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('ContactListMemberCountStep');
-      expect(stepDef.getName()).to.equal('Count a HubSpot List');
+      expect(stepDef.getName()).to.equal('Count a HubSpot list');
       expect(stepDef.getExpression()).to.equal('check the number of members from hubspot contact list (?<listId>.+)');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
     });

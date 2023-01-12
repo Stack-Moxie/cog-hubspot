@@ -8,6 +8,8 @@ export class DeleteDealStep extends BaseStep implements StepInterface {
   protected stepName: string = 'Delete a HubSpot deal';
   protected stepExpression: string = 'delete the hubspot deal with id (?<id>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['delete'];
+  protected targetObject: string = 'Deal';
 
   protected expectedFields: Field[] = [{
     field: 'id',

@@ -7,10 +7,12 @@ import { baseOperators } from '../../client/contants/operators';
 
 export class ContactListMemberCountStep extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Count a HubSpot List';
+  protected stepName: string = 'Count a HubSpot list';
   // tslint:disable-next-line:max-line-length
   protected stepExpression: string = 'check the number of members from hubspot contact list (?<listId>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
+  protected actionList: string[] = ['check'];
+  protected targetObject: string = 'Contact List Count';
   protected expectedFields: Field[] = [{
     field: 'listId',
     type: FieldDefinition.Type.STRING,

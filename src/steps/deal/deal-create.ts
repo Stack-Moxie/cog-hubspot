@@ -8,6 +8,8 @@ export class CreateDealStep extends BaseStep implements StepInterface {
   protected stepName: string = 'Create a HubSpot deal';
   protected stepExpression: string = 'create a hubspot deal';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['create'];
+  protected targetObject: string = 'Deal';
 
   protected expectedFields: Field[] = [{
     field: 'deal',

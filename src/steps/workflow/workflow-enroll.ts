@@ -6,9 +6,11 @@ import { Step, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } f
 
 export class EnrollContactToWorkflowStep extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Enroll a HubSpot Contact into a Workflow';
+  protected stepName: string = 'Enroll a HubSpot contact into a workflow';
   protected stepExpression: string = 'enroll the (?<email>.+) hubspot contact into workflow (?<workflow>.+)';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['add'];
+  protected targetObject: string = 'Contact to Workflow';
 
   protected expectedFields: Field[] = [{
     field: 'workflow',

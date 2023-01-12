@@ -8,6 +8,8 @@ export class DeleteMarketingEventStep extends BaseStep implements StepInterface 
   protected stepName: string = 'Delete a HubSpot marketing event';
   protected stepExpression: string = 'delete the (?<externalEventId>.+) hubspot marketing event';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['delete'];
+  protected targetObject: string = 'Marketing Event';
 
   protected expectedFields: Field[] = [{
     field: 'externalEventId',

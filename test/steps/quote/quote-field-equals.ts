@@ -30,7 +30,7 @@ describe('QuoteFieldEquals', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
       expect(stepDef.getStepId()).to.equal('QuoteFieldEquals');
-      expect(stepDef.getName()).to.equal('Check a field on a HubSpot Quote');
+      expect(stepDef.getName()).to.equal('Check a field on a HubSpot quote');
       expect(stepDef.getExpression()).to.equal('the (?<field>[a-zA-Z0-9_-]+) field on hubspot quote (?<id>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.VALIDATION);
     });

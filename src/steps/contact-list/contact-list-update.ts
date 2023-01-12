@@ -5,9 +5,11 @@ import { Step, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } f
 
 export class UpdateContactListStep extends BaseStep implements StepInterface {
 
-  protected stepName: string = 'Update a HubSpot Contact List';
+  protected stepName: string = 'Update a HubSpot contact list';
   protected stepExpression: string = 'update a hubspot contact list';
   protected stepType: StepDefinition.Type = StepDefinition.Type.ACTION;
+  protected actionList: string[] = ['update'];
+  protected targetObject: string = 'Contact List';
 
   protected expectedFields: Field[] = [{
     field: 'id',
