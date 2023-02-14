@@ -42,8 +42,9 @@ export class CreateContactListStep extends BaseStep implements StepInterface {
       });
 
       const record = this.createRecord(data);
+      const passingRecord = this.createPassingRecord(data, ['name']);
       const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
-      return this.pass('Successfully created HubSpot contact list', [], [record, orderedRecord]);
+      return this.pass('Successfully created HubSpot contact list', [], [record, passingRecord, orderedRecord]);
     } catch (e) {
       return this.error('There was an error creating the contact list in HubSpot: %s', [
         e.toString(),
@@ -51,23 +52,38 @@ export class CreateContactListStep extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(contactList): StepRecord {
+  public getObjectMap(data): Object {
     const obj = {};
-    obj['id'] = contactList.listId;
-    Object.keys(contactList).forEach(key => obj[key] = contactList[key]);
+    obj['id'] = data.listId;
+    Object.keys(data).forEach(key => obj[key] = data[key]);
     obj['createdAt'] = this.client.toDate(obj['createdAt']);
     obj['updatedAt'] = this.client.toDate(obj['updatedAt']);
+    return obj;
+  }
+
+  public createRecord(contactList): StepRecord {
+    const obj = this.getObjectMap(contactList);
     const record = this.keyValue('contactList', 'Created Contact List', obj);
 
     return record;
   }
 
+  public createPassingRecord(data, fields): StepRecord {
+    const obj = this.getObjectMap(data);
+
+    const filteredData = {};
+    if (obj) {
+      Object.keys(obj).forEach((key) => {
+        if (fields.includes(key)) {
+          filteredData[key] = obj[key];
+        }
+      });
+    }
+    return this.keyValue('exposeOnPass:contactList', 'Created or Updated Contact List', filteredData);
+  }
+
   public createOrderedRecord(contactList, stepOrder = 1): StepRecord {
-    const obj = {};
-    obj['id'] = contactList.listId;
-    Object.keys(contactList).forEach(key => obj[key] = contactList[key]);
-    obj['createdAt'] = this.client.toDate(obj['createdAt']);
-    obj['updatedAt'] = this.client.toDate(obj['updatedAt']);
+    const obj = this.getObjectMap(contactList);
     const record = this.keyValue(`contactList.${stepOrder}`, `Created Contact List from Step ${stepOrder}`, obj);
 
     return record;

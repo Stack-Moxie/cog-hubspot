@@ -54,8 +54,9 @@ export class CreateCompanyStep extends BaseStep implements StepInterface {
 
       const data = await this.client.createCompany(company);
       const record = this.createRecord(data);
+      const passingRecord = this.createPassingRecord(data, Object.keys(stepData.company));
       const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
-      return this.pass('Successfully created HubSpot company', [], [record, orderedRecord]);
+      return this.pass('Successfully created HubSpot company', [], [record, passingRecord, orderedRecord]);
     } catch (e) {
       return this.error('There was an error creating the company in HubSpot: %s', [
         e.toString(),
@@ -63,21 +64,35 @@ export class CreateCompanyStep extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(company): StepRecord {
+  public getObjectMap(data): Object {
     const obj = {};
-    obj['id'] = company.companyId;
-    Object.keys(company.properties).forEach(key => obj[key] = company.properties[key].value);
-    const record = this.keyValue('company', 'Created Company', obj);
+    obj['id'] = data.companyId;
+    Object.keys(data.properties).forEach(key => obj[key] = data.properties[key].value);
+    return obj;
+  }
 
+  public createRecord(company): StepRecord {
+    const obj = this.getObjectMap(company);
+    const record = this.keyValue('company', 'Created Company', obj);
     return record;
   }
 
-  public createOrderedRecord(company, stepOrder = 1): StepRecord {
-    const obj = {};
-    obj['id'] = company.companyId;
-    Object.keys(company.properties).forEach(key => obj[key] = company.properties[key].value);
-    const record = this.keyValue(`company.${stepOrder}`, `Created Company from Step ${stepOrder}`, obj);
+  public createPassingRecord(data, fields): StepRecord {
+    const obj = this.getObjectMap(data);
+    const filteredData = {};
+    if (obj) {
+      Object.keys(obj).forEach((key) => {
+        if (fields.includes(key)) {
+          filteredData[key] = obj[key];
+        }
+      });
+    }
+    return this.keyValue('exposeOnPass:company', 'Created Company', filteredData);
+  }
 
+  public createOrderedRecord(company, stepOrder = 1): StepRecord {
+    const obj = this.getObjectMap(company);
+    const record = this.keyValue(`company.${stepOrder}`, `Created Company from Step ${stepOrder}`, obj);
     return record;
   }
 
