@@ -52,10 +52,12 @@ export class CreateProductStep extends BaseStep implements StepInterface {
       });
 
       const data = await this.client.createProduct(product);
-      const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
 
       const record = this.createRecord(data);
-      return this.pass('Successfully created HubSpot product', [], [record, orderedRecord]);
+      const passingRecord = this.createPassingRecord(data, Object.keys(stepData.product));
+      const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
+
+      return this.pass('Successfully created HubSpot product', [], [record, passingRecord, orderedRecord]);
     } catch (e) {
       return this.error('There was an error creating the product in HubSpot: %s', [
         e.toString(),
@@ -63,21 +65,35 @@ export class CreateProductStep extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(product): StepRecord {
+  public getObjectMap(data): Object {
     const obj = {};
-    obj['id'] = product.objectId;
-    Object.keys(product.properties).forEach(key => obj[key] = product.properties[key].value);
-    const record = this.keyValue('product', 'Created Product', obj);
+    obj['id'] = data.objectId;
+    Object.keys(data.properties).forEach(key => obj[key] = data.properties[key].value);
+    return obj;
+  }
 
+  public createRecord(product): StepRecord {
+    const obj = this.getObjectMap(product);
+    const record = this.keyValue('product', 'Created Product', obj);
     return record;
   }
 
-  public createOrderedRecord(product, stepOrder = 1): StepRecord {
-    const obj = {};
-    obj['id'] = product.objectId;
-    Object.keys(product.properties).forEach(key => obj[key] = product.properties[key].value);
-    const record = this.keyValue(`product.${stepOrder}`, `Created Product from Step ${stepOrder}`, obj);
+  public createPassingRecord(data, fields): StepRecord {
+    const obj = this.getObjectMap(data);
+    const filteredData = {};
+    if (obj) {
+      Object.keys(obj).forEach((key) => {
+        if (fields.includes(key)) {
+          filteredData[key] = obj[key];
+        }
+      });
+    }
+    return this.keyValue('exposeOnPass:product', 'Created Product', filteredData);
+  }
 
+  public createOrderedRecord(product, stepOrder = 1): StepRecord {
+    const obj = this.getObjectMap(product);
+    const record = this.keyValue(`product.${stepOrder}`, `Created Product from Step ${stepOrder}`, obj);
     return record;
   }
 }

@@ -53,9 +53,10 @@ export class CreateDealStep extends BaseStep implements StepInterface {
       });
       const data = await this.client.createDeal(deal);
       const record = this.createRecord(data);
+      const passingRecord = this.createPassingRecord(data, Object.keys(stepData.deal));
       const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
 
-      return this.pass('Successfully created HubSpot deal', [], [record, orderedRecord]);
+      return this.pass('Successfully created HubSpot deal', [], [record, passingRecord, orderedRecord]);
     } catch (e) {
       return this.error('There was an error creating the deal in HubSpot: %s', [
         e.toString(),
@@ -63,21 +64,36 @@ export class CreateDealStep extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(deal): StepRecord {
+  public getObjectMap(data): Object {
     const obj = {};
-    obj['id'] = deal.dealId;
-    Object.keys(deal.properties).forEach(key => obj[key] = deal.properties[key].value);
-    const record = this.keyValue('deal', 'Created Deal', obj);
+    obj['id'] = data.dealId;
+    Object.keys(data.properties).forEach(key => obj[key] = data.properties[key].value);
+    return obj;
+  }
 
+  public createRecord(deal): StepRecord {
+    const obj = this.getObjectMap(deal);
+    const record = this.keyValue('deal', 'Created Deal', obj);
     return record;
   }
 
-  public createOrderedRecord(deal, stepOrder = 1): StepRecord {
-    const obj = {};
-    obj['id'] = deal.dealId;
-    Object.keys(deal.properties).forEach(key => obj[key] = deal.properties[key].value);
-    const record = this.keyValue(`deal.${stepOrder}`, `Created Deal from Step ${stepOrder}`, obj);
+  public createPassingRecord(data, fields): StepRecord {
+    const obj = this.getObjectMap(data);
 
+    const filteredData = {};
+    if (obj) {
+      Object.keys(obj).forEach((key) => {
+        if (fields.includes(key)) {
+          filteredData[key] = obj[key];
+        }
+      });
+    }
+    return this.keyValue('exposeOnPass:deal', 'Created or Updated Deal', filteredData);
+  }
+
+  public createOrderedRecord(deal, stepOrder = 1): StepRecord {
+    const obj = this.getObjectMap(deal);
+    const record = this.keyValue(`deal.${stepOrder}`, `Created Deal from Step ${stepOrder}`, obj);
     return record;
   }
 }

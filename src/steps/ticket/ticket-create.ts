@@ -62,9 +62,10 @@ export class CreateTicketStep extends BaseStep implements StepInterface {
       });
       const data = await this.client.createTicket(ticket);
       const record = this.createRecord(data);
+      const passingRecord = this.createPassingRecord(data, Object.keys(stepData.ticket));
       const orderedRecord = this.createOrderedRecord(data, stepData['__stepOrder']);
 
-      return this.pass('Successfully created HubSpot ticket', [], [record, orderedRecord]);
+      return this.pass('Successfully created HubSpot ticket', [], [record, passingRecord, orderedRecord]);
     } catch (e) {
       return this.error('There was an error creating the ticket in HubSpot: %s', [
         e.toString(),
@@ -72,21 +73,35 @@ export class CreateTicketStep extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecord(ticket): StepRecord {
+  public getObjectMap(data): Object {
     const obj = {};
-    obj['id'] = ticket.id;
-    Object.keys(ticket.properties).forEach(key => obj[key] = ticket.properties[key]);
-    const record = this.keyValue('ticket', 'Created Ticket', obj);
+    obj['id'] = data.id;
+    Object.keys(data.properties).forEach(key => obj[key] = data.properties[key]);
+    return obj;
+  }
 
+  public createRecord(ticket): StepRecord {
+    const obj = this.getObjectMap(ticket);
+    const record = this.keyValue('ticket', 'Created Ticket', obj);
     return record;
   }
 
-  public createOrderedRecord(ticket, stepOrder = 1): StepRecord {
-    const obj = {};
-    obj['id'] = ticket.id;
-    Object.keys(ticket.properties).forEach(key => obj[key] = ticket.properties[key]);
-    const record = this.keyValue(`ticket.${stepOrder}`, `Created Ticket from Step ${stepOrder}`, obj);
+  public createPassingRecord(data, fields): StepRecord {
+    const obj = this.getObjectMap(data);
+    const filteredData = {};
+    if (obj) {
+      Object.keys(obj).forEach((key) => {
+        if (fields.includes(key)) {
+          filteredData[key] = obj[key];
+        }
+      });
+    }
+    return this.keyValue('exposeOnPass:ticket', 'Created Ticket', filteredData);
+  }
 
+  public createOrderedRecord(ticket, stepOrder = 1): StepRecord {
+    const obj = this.getObjectMap(ticket);
+    const record = this.keyValue(`ticket.${stepOrder}`, `Created Ticket from Step ${stepOrder}`, obj);
     return record;
   }
 

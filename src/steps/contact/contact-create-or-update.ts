@@ -60,10 +60,11 @@ export class CreateOrUpdateContactStep extends BaseStep implements StepInterface
       const data = await this.client.createOrUpdateContact(email, contact);
       const createdContact = await this.client.getContactByEmail(email);
       const record = this.createRecord(createdContact);
+      const passingRecord = this.createPassingRecord(createdContact, Object.keys(stepData.contact));
       const orderedRecord = this.createOrderedRecord(createdContact, stepData['__stepOrder']);
 
       if (data) {
-        return this.pass('Successfully created or updated HubSpot contact %s', [email], [record, orderedRecord]);
+        return this.pass('Successfully created or updated HubSpot contact %s', [email], [record, passingRecord, orderedRecord]);
       } else {
         return this.fail('Unable to create or update HubSpot contact');
       }
@@ -74,20 +75,35 @@ export class CreateOrUpdateContactStep extends BaseStep implements StepInterface
     }
   }
 
-  public createRecord(contact): StepRecord {
+  public getObjectMap(data): Object {
     const obj = {};
-    Object.keys(contact.properties).forEach(key => obj[key] = contact.properties[key].value);
+    Object.keys(data.properties).forEach(key => obj[key] = data.properties[key].value);
     obj['createdate'] = this.client.toDate(obj['createdate']);
     obj['lastmodifieddate'] = this.client.toDate(obj['lastmodifieddate']);
+    return obj;
+  }
+
+  public createRecord(contact): StepRecord {
+    const obj = this.getObjectMap(contact);
     const record = this.keyValue('contact', 'Created or Updated Contact', obj);
     return record;
   }
 
+  public createPassingRecord(data, fields): StepRecord {
+    const obj = this.getObjectMap(data);
+    const filteredData = {};
+    if (obj) {
+      Object.keys(obj).forEach((key) => {
+        if (fields.includes(key)) {
+          filteredData[key] = obj[key];
+        }
+      });
+    }
+    return this.keyValue('exposeOnPass:contact', 'Created or Updated Contact', filteredData);
+  }
+
   public createOrderedRecord(contact, stepOrder = 1): StepRecord {
-    const obj = {};
-    Object.keys(contact.properties).forEach(key => obj[key] = contact.properties[key].value);
-    obj['createdate'] = this.client.toDate(obj['createdate']);
-    obj['lastmodifieddate'] = this.client.toDate(obj['lastmodifieddate']);
+    const obj = this.getObjectMap(contact);
     const record = this.keyValue(`contact.${stepOrder}`, `Created or Updated Contact  from Step ${stepOrder}`, obj);
     return record;
   }
