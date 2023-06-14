@@ -58,10 +58,6 @@ export class ContactEnrolledToWorkflowStep extends BaseStep implements StepInter
       field: 'type',
       type: FieldDefinition.Type.STRING,
       description: 'The Workflow\'s Type',
-    }, {
-      field: 'description',
-      type: FieldDefinition.Type.STRING,
-      description: 'The Workflow\'s Description',
     }],
     dynamicFields: false,
   }];
@@ -100,8 +96,8 @@ export class ContactEnrolledToWorkflowStep extends BaseStep implements StepInter
           const table = workflows.map((workflow) => {
             return {
               id: workflow.id,
-              type: workflow.type || null,
-              name: workflow.name || null,
+              type: workflow.type,
+              name: workflow.name,
               description: workflow.description || null,
             };
           });
@@ -135,7 +131,7 @@ export class ContactEnrolledToWorkflowStep extends BaseStep implements StepInter
 
   createContactRecord(contact): StepRecord {
     const obj = {};
-    Object.keys(contact.properties).forEach(key => obj[key] = contact.properties[key].value || null);
+    Object.keys(contact.properties).forEach(key => obj[key] = contact.properties[key].value);
     obj['createdate'] = this.client.toDate(obj['createdate']);
     obj['lastmodifieddate'] = this.client.toDate(obj['lastmodifieddate']);
     const record = this.keyValue('contact', 'Checked Contact', obj);
@@ -145,8 +141,8 @@ export class ContactEnrolledToWorkflowStep extends BaseStep implements StepInter
   createWorkflowRecord(workflow) {
     const obj = {
       id: workflow.id,
-      type: workflow.type || null,
-      name: workflow.name || null,
+      type: workflow.type,
+      name: workflow.name,
       description: workflow.description || null,
     };
 
