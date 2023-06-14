@@ -37,10 +37,6 @@ export class EnrollContactToWorkflowStep extends BaseStep implements StepInterfa
       field: 'type',
       type: FieldDefinition.Type.STRING,
       description: 'The Workflow\'s Type',
-    }, {
-      field: 'description',
-      type: FieldDefinition.Type.STRING,
-      description: 'The Workflow\'s Description',
     }],
     dynamicFields: false,
   }, {
@@ -90,7 +86,7 @@ export class EnrollContactToWorkflowStep extends BaseStep implements StepInterfa
               id: workflow.id,
               type: workflow.type,
               name: workflow.name,
-              description: workflow.description,
+              description: workflow.description || null,
             };
           });
           const workflowRecords = this.table('matchedWorkflows', 'Matched Workflows', headers, table);
@@ -134,7 +130,7 @@ export class EnrollContactToWorkflowStep extends BaseStep implements StepInterfa
       id: workflow.id,
       type: workflow.type,
       name: workflow.name,
-      description: workflow.description,
+      description: workflow.description || null,
     };
 
     return this.keyValue('workflow', 'Workflow Enrollment Candidate', obj);

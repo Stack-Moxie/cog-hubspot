@@ -58,10 +58,6 @@ export class ContactEnrolledToWorkflowStep extends BaseStep implements StepInter
       field: 'type',
       type: FieldDefinition.Type.STRING,
       description: 'The Workflow\'s Type',
-    }, {
-      field: 'description',
-      type: FieldDefinition.Type.STRING,
-      description: 'The Workflow\'s Description',
     }],
     dynamicFields: false,
   }];
@@ -102,7 +98,7 @@ export class ContactEnrolledToWorkflowStep extends BaseStep implements StepInter
               id: workflow.id,
               type: workflow.type,
               name: workflow.name,
-              description: workflow.description,
+              description: workflow.description || null,
             };
           });
           workflowRecord = this.table('matchedWorkflows', 'Matched Workflows', headers, table);
@@ -147,7 +143,7 @@ export class ContactEnrolledToWorkflowStep extends BaseStep implements StepInter
       id: workflow.id,
       type: workflow.type,
       name: workflow.name,
-      description: workflow.description,
+      description: workflow.description || null,
     };
 
     return this.keyValue('workflow', 'Workflow Enrollment Candidate', obj);
