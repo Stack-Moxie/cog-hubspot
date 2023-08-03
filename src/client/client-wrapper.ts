@@ -18,10 +18,10 @@ import {
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
-    field: 'apiKey',
+    field: 'accessToken',
     type: FieldDefinition.Type.STRING,
-    description: 'API Key',
-  }];
+    description: 'Access Token',
+  },];
 
   client: Hubspot.default;
   clientReady: Promise<boolean>;
@@ -43,10 +43,9 @@ class ClientWrapper {
           .catch(e => reject(Error(`Authentication error, unable to refresh access token: ${e.toString()}`)));
       });
     } else {
-      // But fallback to API Key-based authentication, which is what is
-      // officially supported.
+      // Fallback to Private App Api Token
       this.client = new clientConstructor({
-        apiKey: auth.get('apiKey').toString(),
+        accessToken: auth.get('accessToken').toString(),
       });
       this.clientReady = Promise.resolve(true);
     }
