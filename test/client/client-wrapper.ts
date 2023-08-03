@@ -25,13 +25,13 @@ describe('ClientWrapper', () => {
     hubspotConstructorStub.returns(hubspotClientStub)
   });
 
-  it('authenticates with api key', () => {
+  it('authenticates with access token', () => {
     // Construct grpc metadata and assert the client was authenticated.
     const expectedCallArgs = {
-      apiKey: 'some-api-key',
+      accessToken: 'some-api-key',
     };
     metadata = new Metadata();
-    metadata.add('apiKey', expectedCallArgs.apiKey);
+    metadata.add('accessToken', expectedCallArgs.accessToken);
 
     // Assert that the underlying API client was authenticated correctly.
     clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);

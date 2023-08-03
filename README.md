@@ -31,7 +31,7 @@ You will be asked for the following authentication details on installation. To a
 
 | Field | Install-Time Environment Variable | Description |
 | --- | --- | --- |
-| **apiKey** | `CRANK_AUTOMATONINC_HUBSPOT__APIKEY` | API Key |
+| **apiKey** | `CRANK_AUTOMATONINC_HUBSPOT__ACCESSTOKEN` | Access Token |
 
 ```shell-session
 # Re-authenticate by running this
