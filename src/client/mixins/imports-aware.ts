@@ -4,7 +4,7 @@ export class ImportsAwareMixinV3 {
   clientV3: Client;
   connectToV3: () => Promise<void>;
 
-  getImportDetails = async (id) => {
+  public async getImportDetails(id) {
     // Get a complete summary of an import record
     // GET /crm/v3/imports/:importId
     // https://developers.hubspot.com/docs/api/crm/imports

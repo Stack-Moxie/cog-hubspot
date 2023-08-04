@@ -10,6 +10,22 @@ class CachingClientWrapper {
     this.idMap = idMap;
   }
 
+  // Imports aware methods
+  // -------------------------------------------------------------------
+  public async getImportDetails(id: string): Promise<any> {
+    const cachekey = `HubSpot|Imports|${id}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getImportDetails(id);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
   // Contact aware methods
   // -------------------------------------------------------------------
 
