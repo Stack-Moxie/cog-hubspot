@@ -22,7 +22,7 @@ describe('ClientWrapper', () => {
       apiRequest: sinon.spy(),
     };
     hubspotConstructorStub = sinon.stub();
-    hubspotConstructorStub.returns(hubspotClientStub)
+    hubspotConstructorStub.returns(hubspotClientStub);
   });
 
   it('authenticates with access token', () => {
@@ -45,7 +45,7 @@ describe('ClientWrapper', () => {
       clientId: 'a-client-id',
       clientSecret: 'a-client-secret',
       refreshToken: 'a-refresh-token',
-      redirectUri: 'https://example.com/oauth-callback'
+      redirectUri: 'https://example.com/oauth-callback',
     };
     metadata = new Metadata();
     metadata.add('clientId', expectedCallArgs.clientId);
@@ -68,7 +68,7 @@ describe('ClientWrapper', () => {
       clientId: 'a-client-id',
       clientSecret: 'a-client-secret',
       refreshToken: 'a-refresh-token',
-      redirectUri: 'https://example.com/oauth-callback'
+      redirectUri: 'https://example.com/oauth-callback',
     };
     metadata = new Metadata();
     metadata.add('clientId', expectedCallArgs.clientId);
@@ -118,16 +118,16 @@ describe('ClientWrapper', () => {
         apiRequest: sinon.stub(),
       };
       hubspotClientStub.apiRequest.returns(Promise.resolve());
-      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then = sinon.stub();
       hubspotClientStub.apiRequest.then.resolves();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('getContactByEmail', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const sampleEmail = 'anyEmail@any.com';
       hubspotClientStub.contacts.getByEmail.resolves({
-        email: sampleEmail
+        email: sampleEmail,
       });
       await clientWrapperUnderTest.getContactByEmail(sampleEmail);
       expect(hubspotClientStub.contacts.getByEmail).to.have.been.calledWith(sampleEmail);
@@ -137,7 +137,7 @@ describe('ClientWrapper', () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const sampleId = '123123123';
       hubspotClientStub.contacts.getById.resolves({
-        email: sampleId
+        email: sampleId,
       });
       await clientWrapperUnderTest.getContactById(sampleId);
       expect(hubspotClientStub.contacts.getById).to.have.been.calledWith(sampleId);
@@ -147,7 +147,7 @@ describe('ClientWrapper', () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const sampleEmail = 'anyEmail@any.com';
       const sampleContact = {
-        email: sampleEmail
+        email: sampleEmail,
       };
       hubspotClientStub.contacts.createOrUpdate.resolves({});
       await clientWrapperUnderTest.createOrUpdateContact(sampleEmail, sampleContact);
@@ -158,7 +158,7 @@ describe('ClientWrapper', () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const sampleId = '123123123';
       const sampleContact = {
-        id: sampleId
+        id: sampleId,
       };
       hubspotClientStub.contacts.update.resolves({});
       await clientWrapperUnderTest.updateContactById(sampleId, sampleContact);
@@ -169,24 +169,24 @@ describe('ClientWrapper', () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const sampleEmail = 'anyEmail@any.com';
       const sampleId = 'anyId';
-      hubspotClientStub.contacts.getByEmail.resolves({sampleEmail, vid: sampleId});
+      hubspotClientStub.contacts.getByEmail.resolves({ sampleEmail, vid: sampleId });
       hubspotClientStub.contacts.delete.resolves({});
       await clientWrapperUnderTest.deleteContactByEmail(sampleEmail);
       expect(hubspotClientStub.contacts.getByEmail).to.have.been.calledWith(sampleEmail);
       expect(hubspotClientStub.contacts.delete).to.have.been.calledWith(sampleId);
     });
-    
+
     it('deleteContactById', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const sampleEmail = 'anyEmail@any.com';
       const sampleId = 'anyId';
-      hubspotClientStub.contacts.getById.resolves({sampleEmail, vid: sampleId});
+      hubspotClientStub.contacts.getById.resolves({ sampleEmail, vid: sampleId });
       hubspotClientStub.contacts.delete.resolves({});
       await clientWrapperUnderTest.deleteContactById(sampleId);
       expect(hubspotClientStub.contacts.getById).to.have.been.calledWith(sampleId);
       expect(hubspotClientStub.contacts.delete).to.have.been.calledWith(sampleId);
     });
-  })
+  });
 
   describe('TicketAware', () => {
     beforeEach(() => {
@@ -194,45 +194,45 @@ describe('ClientWrapper', () => {
         apiRequest: sinon.stub(),
       };
       hubspotClientStub.apiRequest.returns(Promise.resolve());
-      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then = sinon.stub();
       hubspotClientStub.apiRequest.then.resolves();
       hubspotConstructorStub = sinon.stub();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('createTicket', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const sampleTicket = {
-        anyKey: 'anyValue'
+        anyKey: 'anyValue',
       };
       await clientWrapperUnderTest.createTicket(sampleTicket);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'POST',
         path: '/crm/v3/objects/tickets',
         body: {
-          properties: sampleTicket
+          properties: sampleTicket,
         },
       });
     });
 
     it('updateTicket', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
-      const sampleId = '123123'
+      const sampleId = '123123';
       const sampleTicket = {
-        anyKey: 'anyValue'
+        anyKey: 'anyValue',
       };
       await clientWrapperUnderTest.updateTicket(sampleId, sampleTicket);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'PATCH',
         path: `/crm/v3/objects/tickets/${+sampleId}`,
         body: {
-          properties: sampleTicket
+          properties: sampleTicket,
         },
       });
     });
 
     it('deleteTicketById', async () => {
-      const sampleId = '123123'
+      const sampleId = '123123';
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       await clientWrapperUnderTest.deleteTicketById(sampleId);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
@@ -242,7 +242,7 @@ describe('ClientWrapper', () => {
     });
 
     it('getTicketById', async () => {
-      const sampleId = '123123'
+      const sampleId = '123123';
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       await clientWrapperUnderTest.getTicketById(sampleId);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
@@ -258,14 +258,14 @@ describe('ClientWrapper', () => {
         apiRequest: sinon.stub(),
       };
       hubspotClientStub.apiRequest.returns(Promise.resolve());
-      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then = sinon.stub();
       hubspotClientStub.apiRequest.then.resolves();
       hubspotConstructorStub = sinon.stub();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('getQuoteById', async () => {
-      const sampleId = '123123'
+      const sampleId = '123123';
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       await clientWrapperUnderTest.getQuoteById(sampleId);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
@@ -281,16 +281,16 @@ describe('ClientWrapper', () => {
         apiRequest: sinon.stub(),
       };
       hubspotClientStub.apiRequest.returns(Promise.resolve());
-      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then = sinon.stub();
       hubspotClientStub.apiRequest.then.resolves();
       hubspotConstructorStub = sinon.stub();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('getAssociationById', async () => {
-      const sampleFromObject = '123123'
-      const sampleFromObjectId = '123123'
-      const sampleToObject = '123123'
+      const sampleFromObject = '123123';
+      const sampleFromObjectId = '123123';
+      const sampleToObject = '123123';
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       await clientWrapperUnderTest.getAssociationsById(sampleFromObjectId, sampleFromObject, sampleToObject);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
@@ -299,10 +299,10 @@ describe('ClientWrapper', () => {
         body: {
           inputs: [
             {
-              id: sampleFromObjectId
-            }
-          ]
-        }
+              id: sampleFromObjectId,
+            },
+          ],
+        },
       });
     });
   });
@@ -313,10 +313,10 @@ describe('ClientWrapper', () => {
         apiRequest: sinon.stub(),
       };
       hubspotClientStub.apiRequest.returns(Promise.resolve());
-      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then = sinon.stub();
       hubspotClientStub.apiRequest.then.resolves();
       hubspotConstructorStub = sinon.stub();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('getContactsInContactListById', async () => {
@@ -335,40 +335,40 @@ describe('ClientWrapper', () => {
       await clientWrapperUnderTest.createContactList({ name });
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'POST',
-        path: `/contacts/v1/lists`,
+        path: '/contacts/v1/lists',
         body: {
-          name
-        }
+          name,
+        },
       });
     });
 
     it('updateContactListById', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const name = 'anyName';
-      const id = '123123'
+      const id = '123123';
       await clientWrapperUnderTest.updateContactListById(id, { name });
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'POST',
         path: `/contacts/v1/lists/${id}`,
         body: {
-          name
-        }
+          name,
+        },
       });
     });
 
     it('deleteContactListById', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
-      const id = '123123'
+      const id = '123123';
       await clientWrapperUnderTest.deleteContactListById(id);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'DELETE',
         path: `/contacts/v1/lists/${id}`,
       });
     });
-    
+
     it('getContactListById', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
-      const id = '123123'
+      const id = '123123';
       await clientWrapperUnderTest.getContactListById(id);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'GET',
@@ -378,28 +378,28 @@ describe('ClientWrapper', () => {
 
     it('addContactToContactList', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
-      const contactId = '123123'
+      const contactId = '123123';
       const contactEmail = 'anyEmail';
-      const listId = '123123'
+      const listId = '123123';
       await clientWrapperUnderTest.addContactToContactList(listId, contactId, contactEmail);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'POST',
         path: `/contacts/v1/lists/${listId}/add`,
         body: {
           vids: [
-            +contactId
+            +contactId,
           ],
           emails: [
-            contactEmail
-          ]
-        }
+            contactEmail,
+          ],
+        },
       });
     });
 
     it('removeContactToContactList', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
-      const contactId = '123123'
-      const listId = '123123'
+      const contactId = '123123';
+      const listId = '123123';
       await clientWrapperUnderTest.removeContactToContactList(listId, contactId);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
         method: 'POST',
@@ -419,10 +419,10 @@ describe('ClientWrapper', () => {
         apiRequest: sinon.stub(),
       };
       hubspotClientStub.apiRequest.returns(Promise.resolve());
-      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then = sinon.stub();
       hubspotClientStub.apiRequest.then.resolves();
       hubspotConstructorStub = sinon.stub();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('createOrUpdateMarketingEvent', async () => {
@@ -430,7 +430,7 @@ describe('ClientWrapper', () => {
       const input = {
         externalEventId: 'anyValue',
         externalAccountId: 'anyValue',
-        marketingEvent: {anyKey: 'anyValue'}
+        marketingEvent: { anyKey: 'anyValue' },
       };
       await clientWrapperUnderTest.createOrUpdateMarketingEvent(input.marketingEvent, input.externalEventId, input.externalAccountId);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
@@ -473,10 +473,10 @@ describe('ClientWrapper', () => {
         apiRequest: sinon.stub(),
       };
       hubspotClientStub.apiRequest.returns(Promise.resolve());
-      hubspotClientStub.apiRequest.then = sinon.stub()
+      hubspotClientStub.apiRequest.then = sinon.stub();
       hubspotClientStub.apiRequest.then.resolves();
       hubspotConstructorStub = sinon.stub();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('createProduct', async () => {
@@ -493,7 +493,7 @@ describe('ClientWrapper', () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const input = {
         id: 'id',
-        product: {anyKey: 'anyValue'}
+        product: { anyKey: 'anyValue' },
       };
       await clientWrapperUnderTest.updateProductById(input.id, []);
       expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
@@ -528,7 +528,6 @@ describe('ClientWrapper', () => {
     });
   });
 
-
   describe('CompanyAware', () => {
     beforeEach(() => {
       hubspotClientStub = {
@@ -539,14 +538,14 @@ describe('ClientWrapper', () => {
       hubspotClientStub.companies.delete = sinon.stub();
       hubspotClientStub.companies.getById = sinon.stub();
       hubspotConstructorStub = sinon.stub();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('getCompanyById', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const input = {
         id: '1',
-      }
+      };
       hubspotClientStub.companies.getById.resolves({});
       await clientWrapperUnderTest.getCompanyById(input.id);
       expect(hubspotClientStub.companies.getById).to.have.been.calledWith(+input.id);
@@ -557,8 +556,8 @@ describe('ClientWrapper', () => {
       const input = {
         company: {
           anyKey: 'anyValue',
-        }
-      }
+        },
+      };
       hubspotClientStub.companies.create.resolves({});
       await clientWrapperUnderTest.createCompany(input.company);
       expect(hubspotClientStub.companies.create).to.have.been.calledWith(input.company);
@@ -570,8 +569,8 @@ describe('ClientWrapper', () => {
         id: '1',
         company: {
           anyKey: 'anyValue',
-        }
-      }
+        },
+      };
       hubspotClientStub.companies.update.resolves({});
       await clientWrapperUnderTest.updateCompanyById(input.id, input.company);
       expect(hubspotClientStub.companies.update).to.have.been.calledWith(+input.id, input.company);
@@ -581,7 +580,7 @@ describe('ClientWrapper', () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const input = {
         id: '1',
-      }
+      };
       hubspotClientStub.companies.delete.resolves({});
       await clientWrapperUnderTest.deleteCompanyById(input.id);
       expect(hubspotClientStub.companies.delete).to.have.been.calledWith(+input.id);
@@ -598,14 +597,14 @@ describe('ClientWrapper', () => {
       hubspotClientStub.deals.deleteById = sinon.stub();
       hubspotClientStub.deals.getById = sinon.stub();
       hubspotConstructorStub = sinon.stub();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('getDealById', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const input = {
         id: '1',
-      }
+      };
       hubspotClientStub.deals.getById.resolves({});
       await clientWrapperUnderTest.getDealById(input.id);
       expect(hubspotClientStub.deals.getById).to.have.been.calledWith(+input.id);
@@ -616,8 +615,8 @@ describe('ClientWrapper', () => {
       const input = {
         deal: {
           anyKey: 'anyValue',
-        }
-      }
+        },
+      };
       hubspotClientStub.deals.create.resolves({});
       await clientWrapperUnderTest.createDeal(input.deal);
       expect(hubspotClientStub.deals.create).to.have.been.calledWith(input.deal);
@@ -629,8 +628,8 @@ describe('ClientWrapper', () => {
         id: '1',
         deal: {
           anyKey: 'anyValue',
-        }
-      }
+        },
+      };
       hubspotClientStub.deals.updateById.resolves({});
       await clientWrapperUnderTest.updateDealById(input.id, input.deal);
       expect(hubspotClientStub.deals.updateById).to.have.been.calledWith(+input.id, input.deal);
@@ -640,7 +639,7 @@ describe('ClientWrapper', () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const input = {
         id: '1',
-      }
+      };
       hubspotClientStub.deals.deleteById.resolves({});
       await clientWrapperUnderTest.deleteDealById(input.id);
       expect(hubspotClientStub.deals.deleteById).to.have.been.calledWith(+input.id);
@@ -659,11 +658,11 @@ describe('ClientWrapper', () => {
       };
 
       hubspotConstructorStub = sinon.stub();
-      hubspotConstructorStub.returns(hubspotClientStub)
+      hubspotConstructorStub.returns(hubspotClientStub);
     });
 
     it('enrollContactToWorkflow', async () => {
-      const sampleEmail = '123123'
+      const sampleEmail = '123123';
       const sampleWorkflow = { anyKey: 'anyValue' };
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       hubspotClientStub.workflows.enroll.resolves();
@@ -672,19 +671,19 @@ describe('ClientWrapper', () => {
     });
 
     it('findWorkflowByName', async () => {
-      const sampleName = '123123'
+      const sampleName = '123123';
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       hubspotClientStub.workflows.getAll.resolves({
         workflows: [{
           name: sampleName,
-        }]
+        }],
       });
       await clientWrapperUnderTest.findWorkflowByName(sampleName);
       expect(hubspotClientStub.workflows.getAll).to.have.been.calledWith();
     });
 
     it('currentContactWorkflows', async () => {
-      const sampleId = '123123'
+      const sampleId = '123123';
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       hubspotClientStub.workflows.current.resolves({});
       await clientWrapperUnderTest.currentContactWorkflows(sampleId);
