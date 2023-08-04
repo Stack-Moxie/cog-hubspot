@@ -58,6 +58,7 @@
     "typescript": "^3.5.1"
   },
   "dependencies": {
+    "@hubspot/api-client": "^9.1.0",
     "@run-crank/utilities": "^0.5.2",
     "ajv": "^6.12.6",
     "async": "^2.6.4",
