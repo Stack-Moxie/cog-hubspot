@@ -21,7 +21,7 @@ class ClientWrapper {
     field: 'accessToken',
     type: FieldDefinition.Type.STRING,
     description: 'Access Token',
-  },];
+  }];
 
   client: Hubspot.default;
   clientReady: Promise<boolean>;
