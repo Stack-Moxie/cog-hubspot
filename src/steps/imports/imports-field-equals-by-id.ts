@@ -12,7 +12,7 @@ export class ImportFieldEqualsById extends BaseStep implements StepInterface {
   protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_-]+) field on hubspot imports with id (?<id>.+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected actionList: string[] = ['check'];
-  protected targetObject: string = 'Imports by ID';
+  protected targetObject: string = 'Imports';
   protected expectedFields: Field[] = [{
     field: 'id',
     type: FieldDefinition.Type.STRING,
@@ -40,23 +40,23 @@ export class ImportFieldEqualsById extends BaseStep implements StepInterface {
     fields: [{
       field: 'state',
       type: FieldDefinition.Type.STRING,
-      description: 'The Imports State',
+      description: 'Imports State',
     }, {
       field: 'importRequestJson',
       type: FieldDefinition.Type.ANYNONSCALAR,
-      description: 'The Imports ID',
+      description: 'Imports File Metadata',
     }, {
       field: 'importName',
       type: FieldDefinition.Type.STRING,
-      description: 'The Imports Name',
+      description: 'Imports Name',
     }, {
       field: 'updatedAt',
       type: FieldDefinition.Type.DATETIME,
-      description: 'The Imports Updated Datetime',
+      description: 'Imports Updated Datetime',
     }, {
       field: 'optOutImport',
       type: FieldDefinition.Type.BOOLEAN,
-      description: 'The Imports Opt Out Status',
+      description: 'Imports Opt Out Status',
     }, {
       field: 'id',
       type: FieldDefinition.Type.STRING,
