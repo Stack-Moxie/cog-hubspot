@@ -1,5 +1,4 @@
 import { Client } from '@hubspot/api-client';
-import * as fs from 'fs';
 
 export class ImportsAwareMixinV3 {
   clientV3: Client;
@@ -22,7 +21,7 @@ export class ImportsAwareMixinV3 {
     }
   }
 
-  public async postImports(fileMetadata: {}, fileName: string) {
+  public async postImports(columnsToProperties: {}, idColumn: string, fileBuffer: string) {
     // Create a new import
     // POST /crm/v3/imports
     // https://developers.hubspot.com/docs/api/crm/imports
@@ -30,9 +29,12 @@ export class ImportsAwareMixinV3 {
     await this.connectToV3();
     console.log('Calling hubspotClient.crm.imports.coreApi.create. Create or Update a new import:');
     const file = {
-      data: fs.readFileSync(fileName),
-      name: fileName,
+      data: Buffer.from(fileBuffer, 'utf8'),
+      name: `imports-${new Date().toISOString()}.csv`,
     };
+
+    // TODO: create file metadata
+    const fileMetadata = {};
 
     try {
       const importResponse = await this.clientV3.crm.imports.coreApi.create(file, JSON.stringify(fileMetadata));

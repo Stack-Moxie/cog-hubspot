@@ -4,6 +4,7 @@ import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-
 import { Step, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
 import * as util from '@run-crank/utilities';
 import { baseOperators } from '../../client/contants/operators';
+import * as assertValid from 'assert';
 
 export class ImportFieldEqualsById extends BaseStep implements StepInterface {
 
@@ -34,7 +35,7 @@ export class ImportFieldEqualsById extends BaseStep implements StepInterface {
     optionality: FieldDefinition.Optionality.OPTIONAL,
   }];
 
-  protected expectedRecords: ExpectedRecord[] = [{
+  protected expectedRecord: ExpectedRecord = {
     id: 'imports',
     type: RecordDefinition.Type.KEYVALUE,
     fields: [{
@@ -63,7 +64,7 @@ export class ImportFieldEqualsById extends BaseStep implements StepInterface {
       description: 'The Imports unique identifier',
     }],
     dynamicFields: true,
-  }];
+  };
 
   async executeStep(step: Step) {
     const stepData: any = step.getData() ? step.getData().toJavaScript() : {};
@@ -73,10 +74,16 @@ export class ImportFieldEqualsById extends BaseStep implements StepInterface {
     const operator = stepData.operator || 'be';
 
     try {
-      const importsById = await this.client.getImportDetails(id);
+      assertValid(id, 'Imports ID is required');
+      assertValid(field, 'Field is required');
+      assertValid(operator, 'Operator is required');
+      assertValid(expectation !== undefined, 'Expectation is required');
+
+      const importsById = await this.client.postImports(id);
       const actual = importsById[field];
-      const records = this.createRecords(importsById, stepData['__stepOrder']);
+
       const result = this.assert(operator, actual, expectation, field, stepData['__piiSuppressionLevel']);
+      const records = this.createRecords(importsById, stepData['__stepOrder']);
 
       return result.valid ? this.pass(result.message, [], records)
         : this.fail(result.message, [], records);

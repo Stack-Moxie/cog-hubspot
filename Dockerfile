@@ -16,12 +16,6 @@ RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/
 FROM mhart/alpine-node:slim-12 AS final
 WORKDIR /app
 
-# Create the "lists" directory
-RUN mkdir /lists
-
-# Ensure that the "lists" directory can be mounted at runtime
-VOLUME /lists
-
 COPY --from=build /usr/local/bin/dumb-init /usr/local/bin/dumb-init
 COPY --from=build /app .
 COPY . .
