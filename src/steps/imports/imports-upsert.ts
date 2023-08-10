@@ -13,14 +13,19 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
   protected targetObject: string = 'Imports';
   protected expectedFields: Field[] = [
     {
-      field: 'columnsToValues',
-      type: FieldDefinition.Type.MAP,
-      description: 'A map of spreadsheet column names to field values',
+      field: 'columnsToProperties',
+      type: FieldDefinition.Type.ANYNONSCALAR,
+      description: 'A map of spreadsheet column names to Hubspot properties',
     },
     {
       field: 'idColumn',
       type: FieldDefinition.Type.STRING,
       description: 'A name of the column that contains the unique ID for each row',
+    },
+    {
+      field: 'csvArray',
+      type: FieldDefinition.Type.ANYNONSCALAR,
+      description: 'A 2D array of the CSV data to import',
     },
   ];
   protected expectedRecord: ExpectedRecord = {
@@ -46,19 +51,21 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
     const stepData: any = step.getData().toJavaScript();
     const columnsToProperties = stepData.columnsToProperties;
     const idColumn = stepData.idColumn;
-    const csvArray = JSON.parse(stepData.csvArray);
+    const csvArray = JSON.parse(stepData.csvArray.csv);
     const csvArrayLength = csvArray.length;
 
     try {
       assertValid(columnsToProperties, 'No columnsToProperties provided');
+      assertValid(columnsToProperties.leads, 'No columnsToProperties leads provided');
       assertValid(idColumn, 'No idColumn provided');
       assertValid(csvArray, 'No csvArray provided');
+      assertValid(csvArray.csv, 'No csvArray csv provided');
       assertValid(Array.isArray(csvArray), 'csvArray must be an array');
       assertValid(csvArrayLength > 0, 'csvArray must not be empty');
 
       const csvString = csvArray.map(row => row.join(',')).join('\n');
 
-      const postImports = await this.client.postImports(csvString, columnsToProperties, idColumn);
+      const postImports = await this.client.postImports(csvString, columnsToProperties.leads, idColumn);
       const records = this.createRecords(csvArrayLength, postImports, stepData['__stepOrder']);
 
       const result = this.assert('be set', postImports['id'], 'numeric', 'id', stepData['__piiSuppressionLevel']);
