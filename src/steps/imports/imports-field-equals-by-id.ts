@@ -75,11 +75,12 @@ export class ImportFieldEqualsById extends BaseStep implements StepInterface {
 
     try {
       assertValid(id, 'Imports ID is required');
+      assertValid(typeof Number(id) === 'number', 'Imports ID must be a number');
       assertValid(field, 'Field is required');
       assertValid(operator, 'Operator is required');
       assertValid(expectation !== undefined, 'Expectation is required');
 
-      const importsById = await this.client.postImports(id);
+      const importsById = await this.client.getImportDetails(id);
       const actual = importsById[field];
 
       const result = this.assert(operator, actual, expectation, field, stepData['__piiSuppressionLevel']);
