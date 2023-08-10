@@ -14,7 +14,7 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
   protected expectedFields: Field[] = [
     {
       field: 'columnsToProperties',
-      type: FieldDefinition.Type.ANYNONSCALAR,
+      type: FieldDefinition.Type.STRING,
       description: 'A map of spreadsheet column names to Hubspot properties',
     },
     {
@@ -24,7 +24,7 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
     },
     {
       field: 'csvArray',
-      type: FieldDefinition.Type.ANYNONSCALAR,
+      type: FieldDefinition.Type.STRING,
       description: 'A 2D array of the CSV data to import',
     },
   ];
@@ -49,23 +49,21 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
 
   async executeStep(step: Step) {
     const stepData: any = step.getData().toJavaScript();
-    const columnsToProperties = stepData.columnsToProperties;
+    const columnsToProperties = JSON.parse(stepData.columnsToProperties);
     const idColumn = stepData.idColumn;
-    const csvArray = JSON.parse(stepData.csvArray.csv);
+    const csvArray = JSON.parse(stepData.csvArray);
     const csvArrayLength = csvArray.length;
 
     try {
       assertValid(columnsToProperties, 'No columnsToProperties provided');
-      assertValid(columnsToProperties.leads, 'No columnsToProperties leads provided');
       assertValid(idColumn, 'No idColumn provided');
       assertValid(csvArray, 'No csvArray provided');
-      assertValid(csvArray.csv, 'No csvArray csv provided');
       assertValid(Array.isArray(csvArray), 'csvArray must be an array');
       assertValid(csvArrayLength > 0, 'csvArray must not be empty');
 
       const csvString = csvArray.map(row => row.join(',')).join('\n');
 
-      const postImports = await this.client.postImports(csvString, columnsToProperties.leads, idColumn);
+      const postImports = await this.client.postImports(csvString, columnsToProperties, idColumn);
       const records = this.createRecords(csvArrayLength, postImports, stepData['__stepOrder']);
 
       const result = this.assert('be set', postImports['id'], 'numeric', 'id', stepData['__piiSuppressionLevel']);
