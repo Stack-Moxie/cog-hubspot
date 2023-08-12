@@ -25,8 +25,8 @@ describe('ImportsUpsertStep', () => {
   describe('Metadata', () => {
     it('should return expected step metadata', () => {
       const stepDef: StepDefinition = stepUnderTest.getDefinition();
-      expect(stepDef.getStepId()).to.equal('Start Hubspot Lead Import');
-      expect(stepDef.getName()).to.equal('Start hubspot lead import');
+      expect(stepDef.getStepId()).to.equal('ImportsUpsertStep');
+      expect(stepDef.getName()).to.equal('Start Hubspot Lead Import');
       expect(stepDef.getType()).to.equal(StepDefinition.Type.ACTION);
     });
 
@@ -36,11 +36,11 @@ describe('ImportsUpsertStep', () => {
         return field.toObject();
       });
 
-      expect(fields[0].field).to.equal('columnsToProperties');
+      expect(fields[0].key).to.equal('columnsToProperties');
       expect(fields[0].type).to.equal(FieldDefinition.Type.STRING);
-      expect(fields[1].field).to.equal('idColumn');
+      expect(fields[1].key).to.equal('idColumn');
       expect(fields[1].type).to.equal(FieldDefinition.Type.STRING);
-      expect(fields[2].field).to.equal('csvArray');
+      expect(fields[2].key).to.equal('csvArray');
       expect(fields[2].type).to.equal(FieldDefinition.Type.STRING);
     });
   });
