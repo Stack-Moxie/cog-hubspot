@@ -20,15 +20,16 @@ export class ImportsAwareMixinV3 {
     }
   }
 
-  public async postImports(columnsToProperties: {}, idColumn: string, fileBuffer: string) {
+  public async postImports(columnsToProperties: {}, idColumn: string, csvArray: [string]) {
     // Create a new import
     // POST /crm/v3/imports
     // https://developers.hubspot.com/docs/api/crm/imports
 
     const fileName = `imports-${new Date().toISOString()}.csv`;
+    const csvString = csvArray.join('\n');
     // converting CSV to Buffer so we can send data as a file
     const file = {
-      data: Buffer.from(fileBuffer, 'utf8'),
+      data: Buffer.from(csvString, 'utf8'),
       name: fileName,
     };
 
