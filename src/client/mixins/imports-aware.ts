@@ -4,6 +4,22 @@ export class ImportsAwareMixinV3 {
   clientV3: Client;
   connectToV3: () => Promise<void>;
 
+  public async getImportErrors(id: string) {
+    // Get a complete summary of an import record
+    // GET /crm/v3/imports/:importId
+    // https://developers.hubspot.com/docs/api/crm/imports
+
+    try {
+      await this.connectToV3();
+      console.log('Calling hubspotClient.crm.imports.publicImportsApi.getErrors. Retrieve import errors by id:', id);
+      const importResponse = await this.clientV3.crm.imports.publicImportsApi.getErrors(Number(id));
+      console.log('Import Response:', importResponse);
+      return importResponse;
+    } catch (e) {
+      console.error('Error calling hubspotClient.crm.imports.publicImportsApi.getErrors: ', e.message);
+    }
+  }
+
   public async getImportDetails(id: string) {
     // Get a complete summary of an import record
     // GET /crm/v3/imports/:importId
