@@ -41,7 +41,7 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
       description: 'ID of Hubspot Import',
     }, {
       field: 'createdAt',
-      type: FieldDefinition.Type.DATETIME,
+      type: FieldDefinition.Type.NUMERIC,
       description: 'Timestamp of Hubspot Import Creation',
     }],
     dynamicFields: false,

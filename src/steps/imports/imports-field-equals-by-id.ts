@@ -52,7 +52,7 @@ export class ImportFieldEqualsById extends BaseStep implements StepInterface {
       description: 'Imports Name',
     }, {
       field: 'updatedAt',
-      type: FieldDefinition.Type.DATETIME,
+      type: FieldDefinition.Type.NUMERIC,
       description: 'Imports Updated Datetime',
     }, {
       field: 'optOutImport',
