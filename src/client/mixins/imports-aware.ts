@@ -36,7 +36,7 @@ export class ImportsAwareMixinV3 {
     }
   }
 
-  public async postImports(columnMap: {}, contacts: {}, idColumn: string, csvArray: [string]) {
+  public async postImports(columnMap: {}, contacts: {}, idColumn: string) {
     // Create a new import
     // POST /crm/v3/imports
     // https://developers.hubspot.com/docs/api/crm/imports

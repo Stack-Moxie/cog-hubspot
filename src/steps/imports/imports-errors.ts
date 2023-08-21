@@ -22,58 +22,82 @@ export class ImportErrors extends BaseStep implements StepInterface {
   {
     field: 'expectation',
     type: FieldDefinition.Type.NUMERIC,
-    description: 'Expected field value',
+    description: 'Expected minimal error threshhold',
     optionality: FieldDefinition.Optionality.OPTIONAL,
   },
   {
-    field: 'csvArray',
+    field: 'contacts',
     type: FieldDefinition.Type.STRING,
-    description: 'A 2D array of the CSV data',
+    description: 'A finalized list of contacts to import',
   }];
 
   protected expectedRecords: ExpectedRecord[] = [{
-    id: 'imports',
-    type: RecordDefinition.Type.KEYVALUE,
+    id: 'passedContacts',
+    type: RecordDefinition.Type.TABLE,
     fields: [{
-      field: 'errorType',
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: 'Email of Hubspot Contact',
+    }, {
+      field: 'message',
       type: FieldDefinition.Type.STRING,
-      description: 'Imports Error Type',
-    }, {
-      field: 'sourceData',
-      type: FieldDefinition.Type.ANYNONSCALAR,
-      description: 'Imports Error Source Data including lineNumber',
-    }, {
-      field: 'createdAt',
-      type: FieldDefinition.Type.NUMERIC,
-      description: 'Imports Error Created Datetime',
-    }, {
-      field: 'id',
-      type: FieldDefinition.Type.STRING,
-      description: 'The Imports Error unique identifier',
+      description: 'Message for explanation of pass',
     }],
-    dynamicFields: true,
+  }, {
+    id: 'failedContacts',
+    type: RecordDefinition.Type.TABLE,
+    fields: [{
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: 'Email of Hubspot Contact',
+    }, {
+      field: 'message',
+      type: FieldDefinition.Type.STRING,
+      description: 'Message for explanation of fail',
+    }],
+    dynamicFields: false,
   }];
 
   async executeStep(step: Step) {
     const stepData: any = step.getData() ? step.getData().toJavaScript() : {};
     const id = stepData.id;
-    const csvArray = JSON.parse(stepData.csvArray);
-    const csvArrayLength = csvArray.length;
+    const contacts = JSON.parse(stepData.csvArray);
     const expectation = stepData.expectation | 0;
     try {
       assertValid(id, 'Imports ID is required');
       assertValid(typeof Number(id) === 'number', 'Imports ID must be a number');
-      assertValid(Array.isArray(csvArray), 'csvArray must be an array');
-      assertValid(csvArrayLength > 0, 'csvArray must not be empty');
+      assertValid(contacts, 'Finalized Contact List is required');
 
       const errorsById = await this.client.getImportErrors(id);
       const numErrors = errorsById.results.length;
 
       const result = this.assert('be', numErrors.toString(), expectation.toString(), 'errors', stepData['__piiSuppressionLevel']);
-      const records = this.createRecords(errorsById.results, stepData['__stepOrder']);
 
-      return result.valid ? this.pass(result.message, [], records)
-        : this.fail(result.message, [], records);
+      const passedContacts = [];
+      const failedContacts = [];
+      const finalizedContacts = Object.values(contacts);
+
+      const errorRecordSet = new Set();
+      errorsById.results.forEach((errorRecord) => {
+        errorRecordSet.add(errorRecord.sourceData.lineNumber);
+      });
+
+      let lineNumber = 1;
+      finalizedContacts.forEach((contact) => {
+        if (errorRecordSet.has(lineNumber)) {
+          passedContacts.push(contact);
+        } else {
+          failedContacts.push(contact);
+        }
+        lineNumber += 1;
+      });
+
+      const records = [];
+      records.push(this.createTable('passedLeads', 'Leads Created or Updated', passedContacts));
+      records.push(this.createTable('failedLeads', 'Leads Failed', failedContacts));
+
+      return result.valid ? this.pass('Successfully created or updated %d contacts', [passedContacts.length], records)
+        : this.fail('Failed to create or update %d contacts', [failedContacts.length], records);
 
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
@@ -87,13 +111,13 @@ export class ImportErrors extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecords(errorsById, stepOrder = 1): StepRecord[] {
-    const records = [];
-    // Base Record
-    records.push(this.keyValue('imports', 'Checked Errors', errorsById));
-    // Ordered Record
-    records.push(this.keyValue(`imports.${stepOrder}`, `Checked Errors from Step ${stepOrder}`, errorsById));
-    return records;
+  private createTable(id, name, contacts) {
+    const headers = {};
+    const headerKeys = Object.keys(contacts[0] || {});
+    headerKeys.forEach((key: string) => {
+      headers[key] = key;
+    });
+    return this.table(id, name, headers, contacts);
   }
 }
 

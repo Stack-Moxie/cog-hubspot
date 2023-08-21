@@ -68,7 +68,7 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
       assertValid(Array.isArray(csvArray), 'csvArray must be an array');
       assertValid(csvArrayLength > 0, 'csvArray must not be empty');
 
-      const postImports = await this.client.postImports(columnMap, contacts, idColumn, csvArray);
+      const postImports = await this.client.postImports(columnMap, contacts, idColumn);
       const records = this.createRecords(csvArrayLength, postImports, stepData['__stepOrder']);
 
       const result = this.assert('be set', postImports['id'], 'numeric', 'id', stepData['__piiSuppressionLevel']);
