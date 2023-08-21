@@ -36,13 +36,21 @@ export class ImportsAwareMixinV3 {
     }
   }
 
-  public async postImports(propertiesToColumns: {}, idColumn: string, csvArray: [string]) {
+  public async postImports(columnMap: {}, contacts: {}, idColumn: string, csvArray: [string]) {
     // Create a new import
     // POST /crm/v3/imports
     // https://developers.hubspot.com/docs/api/crm/imports
 
     const fileName = `imports-${new Date().toISOString()}.csv`;
-    const csvString = csvArray.join('\n');
+    const finalizedContacts = Object.values(contacts);
+    const finalizedContactCsvArray = [];
+
+    finalizedContacts.forEach((contact) => {
+      const contactArray = Object.values(contact);
+      finalizedContactCsvArray.push(contactArray.join(','));
+    });
+
+    const csvString = finalizedContactCsvArray.join('\n');
     // converting CSV to Buffer so we can send data as a file
     const file = {
       data: Buffer.from(csvString, 'utf8'),
@@ -50,10 +58,10 @@ export class ImportsAwareMixinV3 {
     };
 
     // Create the column mappings array based on the given columnsToProperties
-    const columnMapArray = Object.keys(propertiesToColumns).map((property) => {
+    const columnMapArray = Object.keys(columnMap).map((property) => {
       return {
         columnObjectTypeId: '0-1', // 0-1 is the object type id for contacts
-        columnName: propertiesToColumns[property],
+        columnName: columnMap[property].csvColumn,
         propertyName: property,
 
         // specify the identifier on the front end
@@ -71,7 +79,7 @@ export class ImportsAwareMixinV3 {
           fileName,
           fileFormat: 'CSV',
           fileImportPage: {
-            hasHeader: true,
+            hasHeader: false,
             columnMappings: columnMapArray,
           },
         },

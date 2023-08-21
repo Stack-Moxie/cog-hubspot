@@ -13,9 +13,14 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
   protected targetObject: string = 'Imports';
   protected expectedFields: Field[] = [
     {
-      field: 'propertiesToColumns',
+      field: 'columnMap',
       type: FieldDefinition.Type.STRING,
       description: 'A map of Hubspot properties to CSV columns',
+    },
+    {
+      field: 'contacts',
+      type: FieldDefinition.Type.STRING,
+      description: 'A finalized map of contacts to import',
     },
     {
       field: 'idColumn',
@@ -49,19 +54,21 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
 
   async executeStep(step: Step) {
     const stepData: any = step.getData().toJavaScript();
-    const propertiesToColumns = JSON.parse(stepData.columnsToProperties);
+    const columnMap = JSON.parse(stepData.columnsToProperties);
     const idColumn = stepData.idColumn;
     const csvArray = JSON.parse(stepData.csvArray);
     const csvArrayLength = csvArray.length;
+    const contacts = JSON.parse(stepData.contacts);
 
     try {
-      assertValid(propertiesToColumns, 'No propertiesToColumns provided');
+      assertValid(columnMap, 'No columnMap provided');
+      assertValid(contacts, 'No finalized list of contacts provided');
       assertValid(idColumn, 'No idColumn provided');
       assertValid(csvArray, 'No csvArray provided');
       assertValid(Array.isArray(csvArray), 'csvArray must be an array');
       assertValid(csvArrayLength > 0, 'csvArray must not be empty');
 
-      const postImports = await this.client.postImports(propertiesToColumns, idColumn, csvArray);
+      const postImports = await this.client.postImports(columnMap, contacts, idColumn, csvArray);
       const records = this.createRecords(csvArrayLength, postImports, stepData['__stepOrder']);
 
       const result = this.assert('be set', postImports['id'], 'numeric', 'id', stepData['__piiSuppressionLevel']);
