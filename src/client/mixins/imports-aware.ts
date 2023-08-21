@@ -36,7 +36,7 @@ export class ImportsAwareMixinV3 {
     }
   }
 
-  public async postImports(columnsToProperties: {}, idColumn: string, csvArray: [string]) {
+  public async postImports(propertiesToColumns: {}, idColumn: string, csvArray: [string]) {
     // Create a new import
     // POST /crm/v3/imports
     // https://developers.hubspot.com/docs/api/crm/imports
@@ -50,14 +50,14 @@ export class ImportsAwareMixinV3 {
     };
 
     // Create the column mappings array based on the given columnsToProperties
-    const columnMapArray = Object.keys(columnsToProperties).map((column) => {
+    const columnMapArray = Object.keys(propertiesToColumns).map((property) => {
       return {
         columnObjectTypeId: '0-1', // 0-1 is the object type id for contacts
-        columnName: column,
-        propertyName: columnsToProperties[column],
+        columnName: propertiesToColumns[property],
+        propertyName: property,
 
         // specify the identifier on the front end
-        columnType: column.toLowerCase().includes(idColumn) ? 'HUBSPOT_ALTERNATE_ID' : undefined, // Special case for the ID column
+        columnType: property.toLowerCase().includes(idColumn) ? 'HUBSPOT_ALTERNATE_ID' : undefined, // Special case for the ID column
       };
     });
 
