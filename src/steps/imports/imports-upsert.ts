@@ -54,7 +54,7 @@ export class ImportsUpsertStep extends BaseStep implements StepInterface {
 
   async executeStep(step: Step) {
     const stepData: any = step.getData().toJavaScript();
-    const columnMap = JSON.parse(stepData.columnsToProperties);
+    const columnMap = JSON.parse(stepData.columnMap);
     const idColumn = stepData.idColumn;
     const csvArray = JSON.parse(stepData.csvArray);
     const csvArrayLength = csvArray.length;

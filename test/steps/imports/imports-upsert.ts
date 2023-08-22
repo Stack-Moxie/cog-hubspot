@@ -36,12 +36,14 @@ describe('ImportsUpsertStep', () => {
         return field.toObject();
       });
 
-      expect(fields[0].key).to.equal('columnsToProperties');
+      expect(fields[0].key).to.equal('columnMap');
       expect(fields[0].type).to.equal(FieldDefinition.Type.STRING);
-      expect(fields[1].key).to.equal('idColumn');
+      expect(fields[1].key).to.equal('contacts');
       expect(fields[1].type).to.equal(FieldDefinition.Type.STRING);
-      expect(fields[2].key).to.equal('csvArray');
+      expect(fields[2].key).to.equal('idColumn');
       expect(fields[2].type).to.equal(FieldDefinition.Type.STRING);
+      expect(fields[3].key).to.equal('csvArray');
+      expect(fields[3].type).to.equal(FieldDefinition.Type.STRING);
     });
   });
 
@@ -49,7 +51,8 @@ describe('ImportsUpsertStep', () => {
     describe('Import successfully started', () => {
       beforeEach(() => {
         protoStep.setData(Struct.fromJavaScript({
-          columnsToProperties: JSON.stringify({ column1: 'prop1' }),
+          columnMap: JSON.stringify({ column1: 'prop1' }),
+          contacts: JSON.stringify({ contact1: 'contact1' }),
           idColumn: 'id',
           csvArray: JSON.stringify([['value1', 'value2']]),
         }));
@@ -59,13 +62,12 @@ describe('ImportsUpsertStep', () => {
       });
 
       it('should call postImports with expected parameters', async () => {
-        const columnsToProperties = { column1: 'prop1' };
+        const columnMap = { column1: 'prop1' };
+        const contacts = { contact1: 'contact1' };
         const idColumn = 'id';
-        const csvArray = [['value1', 'value2']];
-        const csvString = csvArray.map(row => row.join(',')).join('\n');
 
         await stepUnderTest.executeStep(protoStep);
-        expect(clientStub.postImports).to.have.been.calledWith(csvString, columnsToProperties, idColumn);
+        expect(clientStub.postImports).to.have.been.calledWith(columnMap, contacts, idColumn);
       });
 
       it('should respond with pass', async () => {
@@ -77,7 +79,8 @@ describe('ImportsUpsertStep', () => {
     describe('Error occurred', () => {
       beforeEach(() => {
         protoStep.setData(Struct.fromJavaScript({
-          columnsToProperties: JSON.stringify({ column1: 'prop1' }),
+          columnMap: JSON.stringify({ column1: 'prop1' }),
+          contacts: JSON.stringify({ contact1: 'contact1' }),
           idColumn: 'id',
           csvArray: JSON.stringify([['value1', 'value2']]),
         }));
