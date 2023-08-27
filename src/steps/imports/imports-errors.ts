@@ -70,8 +70,6 @@ export class ImportErrors extends BaseStep implements StepInterface {
 
       const errorsById = await this.client.getImportErrors(id);
       const numErrors = errorsById.results.length;
-      console.log('Number of errors: ', numErrors);
-      console.log('Results:', errorsById.results);
       const result = this.assert('be', numErrors.toString(), expectation.toString(), 'errors', stepData['__piiSuppressionLevel']);
 
       const passedContacts = [];
@@ -95,6 +93,7 @@ export class ImportErrors extends BaseStep implements StepInterface {
 
       const records = [];
       records.push(this.createTable('passedLeads', 'Leads Created or Updated', passedContacts));
+      console.log('Passed Contacts: %s', JSON.stringify(passedContacts));
       records.push(this.createTable('failedLeads', 'Leads Failed', failedContacts));
 
       return result.valid ? this.pass('Successfully imported %d contacts', [passedContacts.length], records)
