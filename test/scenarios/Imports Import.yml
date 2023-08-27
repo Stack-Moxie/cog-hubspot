@@ -16,11 +16,11 @@ steps:
     contacts: '{{test.contacts}}'
     idColumn: '{{test.idColumn}}'
     csvArray: '{{test.csvArray}}'
-- step: the state field on hubspot imports with id {{test.id}} should be DONE
+- step: the state field on hubspot imports with id {{hubspot.imports.id}} should be DONE
   failAfter: 60
   data:
-    id: '{{test.id}}'
-- step: And number of errors for hubspot imports with id {{test.id}} should be 0
+    id: '{{hubspot.imports.id}}'
+- step: And number of errors for hubspot imports with id {{hubspot.imports.id}} should be 0
   data:
-    id: '{{test.id}}'
+    id: '{{hubspot.imports.id}}'
     contacts: '{{test.contacts}}'
