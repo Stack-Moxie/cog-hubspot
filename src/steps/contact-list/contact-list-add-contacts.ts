@@ -31,13 +31,9 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
     id: 'contactList',
     type: RecordDefinition.Type.KEYVALUE,
     fields: [{
-      field: 'listId',
-      type: FieldDefinition.Type.STRING,
-      description: 'The Contact List\'s ID',
-    }, {
-      field: 'name',
-      type: FieldDefinition.Type.STRING,
-      description: 'The Contact List\'s Name',
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: 'The Contact Record Which Was Added To The Contact List',
     }],
     dynamicFields: true,
   }];
@@ -46,6 +42,7 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
     const stepData: any = step.getData().toJavaScript();
     const listId: string = stepData.listId;
     const importedContacts: any[] = stepData.importedContacts ? JSON.parse(stepData.importedContacts) : [];
+    console.log('importedContacts: ', importedContacts);
     const expectation = stepData.expectation | 0;
     try {
       assertValid(listId, 'List ID is required');
@@ -56,21 +53,19 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
 
       // HubSpot API only allows 500 contacts to be added to a list at a time
       const chunkSize = 500;
-      const updated = [];
       const invalidEmails = [];
       for (let i = 0; i < importedContacts.length; i += chunkSize) {
         const chunk = importedContacts.slice(i, i + chunkSize);
         const emails = chunk.map(contact => contact['email']);
         console.log('Adding contacts to contact list: %s', emails);
         const response = await this.client.addContactsToContactList(contactList['listId'], emails);
-        updated.push(...response['updated']);
         invalidEmails.push(...response['invalidEmails']);
       }
 
       const result = this.assert('be', invalidEmails.length.toString(), expectation.toString(), 'invalidEmails', stepData['__piiSuppressionLevel']);
-      const emailsAddedToContactList = importedContacts.filter(item => !invalidEmails.includes(item.email));
+      const contactsAddedToContactList = importedContacts.filter(item => !invalidEmails.includes(item.email));
 
-      const records = this.createRecords(updated.length, invalidEmails.length, emailsAddedToContactList, contactList['name'], stepData['__stepOrder']);
+      const records = this.createRecords(invalidEmails.length, contactsAddedToContactList, contactList['name'], stepData['__stepOrder']);
 
       return result.valid ? this.pass(result.message, [], records)
         : this.fail(result.message, [], records);
@@ -81,12 +76,12 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
     }
   }
 
-  public createRecords(updated, invalidEmails, emailsAddedToContactList, contactListName, stepOrder = 4): StepRecord[] {
+  public createRecords(invalidEmails, contactsAddedToContactList, contactListName, stepOrder = 4): StepRecord[] {
     const records = [];
     // Base Record
-    records.push(this.keyValue('contactList', `Added ${updated} Hubspot contacts to ${contactListName} with ${invalidEmails} invalid emails`, emailsAddedToContactList));
+    records.push(this.keyValue('contactList', `Added ${contactsAddedToContactList.length} Hubspot contacts to ${contactListName} with ${invalidEmails} invalid emails`, contactsAddedToContactList));
     // Ordered Record
-    records.push(this.keyValue(`contactList.${stepOrder}`, `Added ${updated} Hubspot contacts to ${contactListName} with ${invalidEmails} invalid emails from Step ${stepOrder}`, emailsAddedToContactList));
+    records.push(this.keyValue(`contactList.${stepOrder}`, `Added ${contactsAddedToContactList.length} Hubspot contacts to ${contactListName} with ${invalidEmails} invalid emails from Step ${stepOrder}`, contactsAddedToContactList));
     return records;
   }
 }

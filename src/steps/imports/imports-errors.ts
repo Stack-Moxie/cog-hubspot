@@ -38,10 +38,6 @@ export class ImportErrors extends BaseStep implements StepInterface {
       field: 'email',
       type: FieldDefinition.Type.EMAIL,
       description: 'Email of Hubspot Contact',
-    }, {
-      field: 'message',
-      type: FieldDefinition.Type.STRING,
-      description: 'Message for explanation of pass',
     }],
   }, {
     id: 'failedContacts',
@@ -50,10 +46,6 @@ export class ImportErrors extends BaseStep implements StepInterface {
       field: 'email',
       type: FieldDefinition.Type.EMAIL,
       description: 'Email of Hubspot Contact',
-    }, {
-      field: 'message',
-      type: FieldDefinition.Type.STRING,
-      description: 'Message for explanation of fail',
     }],
     dynamicFields: false,
   }];
@@ -92,9 +84,8 @@ export class ImportErrors extends BaseStep implements StepInterface {
       });
 
       const records = [];
-      records.push(this.createTable('passedLeads', 'Leads Created or Updated', passedContacts));
-      console.log('Passed Contacts: %s', JSON.stringify(passedContacts));
-      records.push(this.createTable('failedLeads', 'Leads Failed', failedContacts));
+      records.push(this.createTable('passedContacts', 'Contacts Created or Updated', passedContacts));
+      records.push(this.createTable('failedContacts', 'Contacts Failed', failedContacts));
 
       return result.valid ? this.pass('Successfully imported %d contacts', [passedContacts.length], records)
         : this.fail('Failed to create or update %d contacts', [failedContacts.length], records);

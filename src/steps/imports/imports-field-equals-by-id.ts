@@ -101,7 +101,7 @@ export class ImportFieldEqualsById extends BaseStep implements StepInterface {
     }
   }
 
-  public createRecords(importsById, stepOrder = 1): StepRecord[] {
+  public createRecords(importsById, stepOrder = 2): StepRecord[] {
     const records = [];
     // Base Record
     records.push(this.keyValue('imports', 'Checked Imports', importsById));
