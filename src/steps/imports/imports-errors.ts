@@ -28,7 +28,7 @@ export class ImportErrors extends BaseStep implements StepInterface {
   {
     field: 'contacts',
     type: FieldDefinition.Type.STRING,
-    description: 'A finalized list of contacts to import',
+    description: 'A finalized list of contacts',
   }];
 
   protected expectedRecords: ExpectedRecord[] = [{
@@ -61,7 +61,7 @@ export class ImportErrors extends BaseStep implements StepInterface {
   async executeStep(step: Step) {
     const stepData: any = step.getData() ? step.getData().toJavaScript() : {};
     const id = stepData.id;
-    const contacts = JSON.parse(stepData.csvArray);
+    const contacts = JSON.parse(stepData.contacts);
     const expectation = stepData.expectation | 0;
     try {
       assertValid(id, 'Imports ID is required');
@@ -70,7 +70,8 @@ export class ImportErrors extends BaseStep implements StepInterface {
 
       const errorsById = await this.client.getImportErrors(id);
       const numErrors = errorsById.results.length;
-
+      console.log('Number of errors: ', numErrors);
+      console.log('Results:', errorsById.results);
       const result = this.assert('be', numErrors.toString(), expectation.toString(), 'errors', stepData['__piiSuppressionLevel']);
 
       const passedContacts = [];
@@ -85,9 +86,9 @@ export class ImportErrors extends BaseStep implements StepInterface {
       let lineNumber = 1;
       finalizedContacts.forEach((contact) => {
         if (errorRecordSet.has(lineNumber)) {
-          passedContacts.push(contact);
-        } else {
           failedContacts.push(contact);
+        } else {
+          passedContacts.push(contact);
         }
         lineNumber += 1;
       });
@@ -96,7 +97,7 @@ export class ImportErrors extends BaseStep implements StepInterface {
       records.push(this.createTable('passedLeads', 'Leads Created or Updated', passedContacts));
       records.push(this.createTable('failedLeads', 'Leads Failed', failedContacts));
 
-      return result.valid ? this.pass('Successfully created or updated %d contacts', [passedContacts.length], records)
+      return result.valid ? this.pass('Successfully imported %d contacts', [passedContacts.length], records)
         : this.fail('Failed to create or update %d contacts', [failedContacts.length], records);
 
     } catch (e) {
@@ -104,10 +105,10 @@ export class ImportErrors extends BaseStep implements StepInterface {
         return this.error('%s Please provide one of: %s', [e.message, baseOperators.join(', ')]);
       }
       if (e instanceof util.InvalidOperandError) {
-        return this.error('There was an error checking the imports field: %s', [e.message]);
+        return this.error('There was an error checking the import: %s', [e.message]);
       }
 
-      return this.error('There was an error checking the imports field: %s', [e.toString()]);
+      return this.error('There was an error checking the import: %s', [e.toString()]);
     }
   }
 
