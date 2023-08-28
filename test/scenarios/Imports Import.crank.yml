@@ -25,7 +25,7 @@ steps:
   data:
     id: '{{hubspot.imports.id}}'
     contacts: '{{test.contacts}}'
-- step: And add a list of hubspot contacts to contact list by email 
+- step: And add a list of hubspot contacts to contact list by email
   data:
     importedContacts: '{{test.passedContacts}}'
     listId: '2'

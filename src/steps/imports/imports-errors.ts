@@ -70,6 +70,10 @@ export class ImportErrors extends BaseStep implements StepInterface {
 
       const errorRecordSet = new Set();
       errorsById.results.forEach((errorRecord) => {
+        if (!errorRecord.sourceData || !errorRecord.sourceData.lineNumber) {
+          errorRecordSet.add(-1);
+          return;
+        }
         errorRecordSet.add(errorRecord.sourceData.lineNumber);
       });
 
