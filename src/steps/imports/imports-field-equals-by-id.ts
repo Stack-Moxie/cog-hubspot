@@ -90,13 +90,6 @@ export class ImportFieldEqualsById extends BaseStep implements StepInterface {
         : this.fail(result.message, [], records);
 
     } catch (e) {
-      if (e instanceof util.UnknownOperatorError) {
-        return this.error('%s Please provide one of: %s', [e.message, baseOperators.join(', ')]);
-      }
-      if (e instanceof util.InvalidOperandError) {
-        return this.error('There was an error checking the imports field: %s', [e.message]);
-      }
-
       return this.error('There was an error checking the imports field: %s', [e.toString()]);
     }
   }

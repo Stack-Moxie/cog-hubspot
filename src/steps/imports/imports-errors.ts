@@ -95,14 +95,7 @@ export class ImportErrors extends BaseStep implements StepInterface {
         : this.fail('Failed to create or update %d contacts', [failedContacts.length], records);
 
     } catch (e) {
-      if (e instanceof util.UnknownOperatorError) {
-        return this.error('%s Please provide one of: %s', [e.message, baseOperators.join(', ')]);
-      }
-      if (e instanceof util.InvalidOperandError) {
-        return this.error('There was an error checking the import: %s', [e.message]);
-      }
-
-      return this.error('There was an error checking the import: %s', [e.toString()]);
+      return this.error('There was an error checking the import errors: %s', [e.toString()]);
     }
   }
 

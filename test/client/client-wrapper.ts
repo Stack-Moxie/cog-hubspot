@@ -396,6 +396,22 @@ describe('ClientWrapper', () => {
       });
     });
 
+    it('addContactsToContactList', async () => {
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      const contactEmails = 'anyEmail';
+      const listId = '123123';
+      await clientWrapperUnderTest.addContactsToContactList(listId, [contactEmails]);
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'POST',
+        path: `/contacts/v1/lists/${listId}/add`,
+        body: {
+          emails: [
+            contactEmails,
+          ],
+        },
+      });
+    });
+
     it('removeContactToContactList', async () => {
       clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
       const contactId = '123123';
@@ -688,6 +704,55 @@ describe('ClientWrapper', () => {
       hubspotClientStub.workflows.current.resolves({});
       await clientWrapperUnderTest.currentContactWorkflows(sampleId);
       expect(hubspotClientStub.workflows.current).to.have.been.calledWith(sampleId);
+    });
+  });
+
+  describe('ImportsAware', () => {
+    let hubspotClientStub;
+    let id;
+    let columnMap;
+    let contacts;
+    let idColumn;
+
+    beforeEach(() => {
+      hubspotClientStub = {
+        crm: {
+          imports: {
+            coreApi: {
+              create: sinon.stub(),
+              getById: sinon.stub(),
+            },
+            publicImportsApi: {
+              getErrors: sinon.stub(),
+            },
+          },
+        },
+      };
+
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub);
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      clientWrapperUnderTest.connectToV3 = sinon.stub();
+      clientWrapperUnderTest.clientV3 = hubspotClientStub;
+      id = '123123';
+      columnMap = { email: { csvColumn: 'Email' } };
+      contacts = { 1: { email: 'test@example.com' } };
+      idColumn = 'email';
+    });
+    it('getImportErrors', async () => {
+      hubspotClientStub.crm.imports.publicImportsApi.getErrors.resolves({});
+      await clientWrapperUnderTest.getImportErrors(id);
+      expect(hubspotClientStub.crm.imports.publicImportsApi.getErrors).to.have.been.calledWith(Number(id));
+    });
+    it('getImportDetails', async () => {
+      hubspotClientStub.crm.imports.coreApi.getById.resolves({});
+      await clientWrapperUnderTest.getImportDetails(id);
+      expect(hubspotClientStub.crm.imports.coreApi.getById).to.have.been.calledWith(Number(id));
+    });
+    it('postImports', async () => {
+      hubspotClientStub.crm.imports.coreApi.create.resolves({});
+      await clientWrapperUnderTest.postImports(columnMap, contacts, idColumn);
+      expect(hubspotClientStub.crm.imports.coreApi.create).to.have.been.called;
     });
   });
 });

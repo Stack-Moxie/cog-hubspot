@@ -55,7 +55,7 @@ describe('ImportErrors', () => {
       });
     });
 
-    describe('Field validation failed', () => {
+    describe('Field validation failed with error', () => {
       beforeEach(() => {
         protoStep.setData(Struct.fromJavaScript({
           id: '123',
@@ -63,6 +63,22 @@ describe('ImportErrors', () => {
           contacts: '[]',
         }));
         clientWrapperStub.getImportErrors.resolves({ results: [{ error: 'Error' }] });
+      });
+
+      it('should respond with fail', async () => {
+        const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
+        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
+      });
+    });
+
+    describe('Field validation failed with api response', () => {
+      beforeEach(() => {
+        protoStep.setData(Struct.fromJavaScript({
+          id: '123',
+          expectation: '0',
+          contacts: '[]',
+        }));
+        clientWrapperStub.getImportErrors.resolves({ results: [{ sourceData: { lineNumber: 1 } }] });
       });
 
       it('should respond with fail', async () => {

@@ -76,6 +76,23 @@ describe('ImportsUpsertStep', () => {
       });
     });
 
+    describe('Import response missing id', () => {
+      beforeEach(() => {
+        protoStep.setData(Struct.fromJavaScript({
+          columnMap: JSON.stringify({ column1: 'prop1' }),
+          contacts: JSON.stringify({ contact1: 'contact1' }),
+          idColumn: 'id',
+          csvArray: JSON.stringify([['value1', 'value2']]),
+        }));
+        clientStub.postImports.resolves({});
+      });
+
+      it('should respond with fail', async () => {
+        const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
+        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.FAILED);
+      });
+    });
+
     describe('Error occurred', () => {
       beforeEach(() => {
         protoStep.setData(Struct.fromJavaScript({
