@@ -11,9 +11,7 @@ export class ImportsAwareMixinV3 {
 
     try {
       await this.connectToV3();
-      console.log('Calling hubspotClient.crm.imports.publicImportsApi.getErrors. Retrieve import errors by id:', id);
       const importResponse = await this.clientV3.crm.imports.publicImportsApi.getErrors(Number(id));
-      console.log('Import Response:', importResponse);
       return importResponse;
     } catch (e) {
       console.error('Error calling hubspotClient.crm.imports.publicImportsApi.getErrors: ', e.message);
@@ -27,9 +25,7 @@ export class ImportsAwareMixinV3 {
 
     try {
       await this.connectToV3();
-      console.log('Calling hubspotClient.crm.imports.coreApi.getById. Retrieve a import details by id:', id);
       const importResponse = await this.clientV3.crm.imports.coreApi.getById(Number(id));
-      console.log('Import Response:', importResponse);
       return importResponse;
     } catch (e) {
       console.error('Error calling hubspotClient.crm.imports.coreApi.getById: ', e.message);
@@ -88,9 +84,7 @@ export class ImportsAwareMixinV3 {
 
     try {
       await this.connectToV3();
-      console.log('Calling hubspotClient.crm.imports.coreApi.create. Create or Update a new import:');
       const importResponse = await this.clientV3.crm.imports.coreApi.create(file, JSON.stringify(fileMetadata));
-      console.log('Import Response:', importResponse);
       return importResponse;
     } catch (e) {
       console.error('Error calling hubspotClient.crm.imports.coreApi.create: ', e.message);

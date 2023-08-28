@@ -50,7 +50,6 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
     const stepData: any = step.getData().toJavaScript();
     const listId: string = stepData.listId;
     const importedContacts: any[] = stepData.importedContacts ? JSON.parse(stepData.importedContacts) : [];
-    console.log('importedContacts: ', importedContacts);
     const expectation = stepData.expectation | 0;
     try {
       assertValid(listId, 'List ID is required');
@@ -65,7 +64,6 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
       for (let i = 0; i < importedContacts.length; i += chunkSize) {
         const chunk = importedContacts.slice(i, i + chunkSize);
         const emails = chunk.map(contact => contact['email']);
-        console.log('Adding contacts to contact list: %s', emails);
         const response = await this.client.addContactsToContactList(contactList['listId'], emails);
         invalidEmails.push(...response['invalidEmails']);
       }
