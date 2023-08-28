@@ -28,14 +28,22 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
   }];
 
   protected expectedRecords: ExpectedRecord[] = [{
-    id: 'contactList',
-    type: RecordDefinition.Type.KEYVALUE,
+    id: 'contactsAddedToList',
+    type: RecordDefinition.Type.TABLE,
     fields: [{
       field: 'email',
       type: FieldDefinition.Type.EMAIL,
-      description: 'The Contact Record Which Was Added To The Contact List',
+      description: 'Email of Hubspot Contact added to list',
     }],
-    dynamicFields: true,
+  }, {
+    id: 'contactsNotAddedToList',
+    type: RecordDefinition.Type.TABLE,
+    fields: [{
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: 'Email of Hubspot Contact not added to list',
+    }],
+    dynamicFields: false,
   }];
 
   async executeStep(step: Step) {
@@ -64,11 +72,14 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
 
       const result = this.assert('be', invalidEmails.length.toString(), expectation.toString(), 'invalidEmails', stepData['__piiSuppressionLevel']);
       const contactsAddedToContactList = importedContacts.filter(item => !invalidEmails.includes(item.email));
+      const contactsNotAddedToContactList = importedContacts.filter(item => invalidEmails.includes(item.email));
 
-      const records = this.createRecords(invalidEmails.length, contactsAddedToContactList, contactList['name'], stepData['__stepOrder']);
+      const records = [];
+      records.push(this.createTable('contactsAddedToList', 'Contacts Added to List', contactsAddedToContactList));
+      records.push(this.createTable('contactsNotAddedToList', 'Contacts not Added to List', contactsNotAddedToContactList));
 
-      return result.valid ? this.pass(result.message, [], records)
-        : this.fail(result.message, [], records);
+      return result.valid ? this.pass('Successfully added %d contacts to list %s', [contactsAddedToContactList.length, contactList['name']], records)
+        : this.fail('Failed to add %d contacts to list %s', [contactsNotAddedToContactList.length, contactList['name']], records);
     } catch (e) {
       return this.error('There was an error adding contacts to contact list in HubSpot: %s', [
         e.toString(),
@@ -76,13 +87,13 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
     }
   }
 
-  public createRecords(invalidEmails, contactsAddedToContactList, contactListName, stepOrder = 4): StepRecord[] {
-    const records = [];
-    // Base Record
-    records.push(this.keyValue('contactList', `Added ${contactsAddedToContactList.length} Hubspot contacts to ${contactListName} with ${invalidEmails} invalid emails`, contactsAddedToContactList));
-    // Ordered Record
-    records.push(this.keyValue(`contactList.${stepOrder}`, `Added ${contactsAddedToContactList.length} Hubspot contacts to ${contactListName} with ${invalidEmails} invalid emails from Step ${stepOrder}`, contactsAddedToContactList));
-    return records;
+  private createTable(id, name, contacts) {
+    const headers = {};
+    const headerKeys = Object.keys(contacts[0] || {});
+    headerKeys.forEach((key: string) => {
+      headers[key] = key;
+    });
+    return this.table(id, name, headers, contacts);
   }
 }
 
