@@ -1,7 +1,6 @@
 import * as grpc from 'grpc';
 import * as Hubspot from 'hubspot';
-// esModuleInterop workaround
-import apiClient = require('@hubspot/api-client');
+import { Client } from '@hubspot/api-client';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 import {
@@ -27,7 +26,7 @@ class ClientWrapper {
   }];
 
   client: Hubspot.default;
-  clientV3: apiClient.Client;
+  clientV3: Client;
   clientReady: Promise<boolean>;
   auth: grpc.Metadata;
 
@@ -48,7 +47,7 @@ class ClientWrapper {
       return;
     }
     // Fallback to Private App Api Token
-    this.clientV3 = new apiClient.Client({
+    this.clientV3 = new Client({
       accessToken: this.auth.get('accessToken').toString(),
     });
   }
