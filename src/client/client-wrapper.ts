@@ -1,5 +1,6 @@
 import * as grpc from 'grpc';
 import * as Hubspot from 'hubspot';
+import { Client } from '@hubspot/api-client';
 import { Field } from '../core/base-step';
 import { FieldDefinition } from '../proto/cog_pb';
 import {
@@ -14,19 +15,45 @@ import {
   QuoteAwareMixin,
   TicketAwareMixin,
   WorkflowAwareMixin,
+  ImportsAwareMixinV3,
 } from './mixins';
 
 class ClientWrapper {
   public static expectedAuthFields: Field[] = [{
-    field: 'apiKey',
+    field: 'accessToken',
     type: FieldDefinition.Type.STRING,
-    description: 'API Key',
+    description: 'Access Token',
   }];
 
   client: Hubspot.default;
+  clientV3: Client;
   clientReady: Promise<boolean>;
+  auth: grpc.Metadata;
+
+  connectToV3 = async () => {
+    if (this.auth.get('refreshToken').toString()) {
+      const result = await this.clientV3.oauth.tokensApi.create(
+        'refresh_token',
+        undefined,
+        undefined,
+        this.auth.get('clientId').toString(),
+        this.auth.get('clientSecret').toString(),
+        this.auth.get('refreshToken').toString(),
+      );
+      console.log('Updated refresh token', result);
+      // this assigns the accessToken to the client, so your client is ready
+      // to use
+      this.clientV3.setAccessToken(result.accessToken);
+      return;
+    }
+    // Fallback to Private App Api Token
+    this.clientV3 = new Client({
+      accessToken: this.auth.get('accessToken').toString(),
+    });
+  }
 
   constructor(auth: grpc.Metadata, clientConstructor = Hubspot.default) {
+    this.auth = auth;
     // Support OAuth-based authentication under the hood.
     if (auth.get('refreshToken').toString()) {
       this.client = new clientConstructor({
@@ -43,10 +70,9 @@ class ClientWrapper {
           .catch(e => reject(Error(`Authentication error, unable to refresh access token: ${e.toString()}`)));
       });
     } else {
-      // But fallback to API Key-based authentication, which is what is
-      // officially supported.
+      // Fallback to Private App Api Token
       this.client = new clientConstructor({
-        apiKey: auth.get('apiKey').toString(),
+        accessToken: auth.get('accessToken').toString(),
       });
       this.clientReady = Promise.resolve(true);
     }
@@ -64,7 +90,8 @@ interface ClientWrapper extends
   MarketingEventAwareMixin,
   QuoteAwareMixin,
   AssociationAwareMixin,
-  ContactListAwareMixin { }
+  ContactListAwareMixin,
+  ImportsAwareMixinV3 { }
 
 applyMixins(ClientWrapper, [
   ContactAwareMixin,
@@ -78,6 +105,7 @@ applyMixins(ClientWrapper, [
   QuoteAwareMixin,
   AssociationAwareMixin,
   ContactListAwareMixin,
+  ImportsAwareMixinV3,
 ]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {

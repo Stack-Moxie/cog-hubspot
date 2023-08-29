@@ -98,6 +98,23 @@ export class ContactListAwareMixin {
     });
   }
 
+  public async addContactsToContactList(listId: string, contactEmails: [string]): Promise<Object> {
+    await this.clientReady;
+    return new Promise((resolve, reject) => {
+      this.client.apiRequest({
+        method: 'POST',
+        path: `/contacts/v1/lists/${listId}/add`,
+        body: {
+          emails: contactEmails,
+        },
+      }).then((result) => {
+        resolve(result);
+      }, (error) => {
+        reject(error.message);
+      });
+    });
+  }
+
   public async removeContactToContactList(listId: string, contactId: string): Promise<Object> {
     await this.clientReady;
     return new Promise((resolve, reject) => {

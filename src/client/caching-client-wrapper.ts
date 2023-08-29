@@ -10,6 +10,30 @@ class CachingClientWrapper {
     this.idMap = idMap;
   }
 
+  // Imports aware methods
+  // -------------------------------------------------------------------
+  public async getImportDetails(id: string): Promise<any> {
+    const cachekey = `HubSpot|Imports|${id}|${this.cachePrefix}`;
+    const stored = await this.getCache(cachekey);
+    if (stored) {
+      return stored;
+    }
+
+    const result = await this.client.getImportDetails(id);
+    if (result) {
+      await this.setCache(cachekey, result);
+    }
+    return result;
+  }
+
+  public async getImportErrors(id: string): Promise<any> {
+    return await this.client.getImportErrors(id);
+  }
+
+  public async postImports(columnMap: {}, contacts: {}, idColumn: string): Promise<any> {
+    return await this.client.postImports(columnMap, contacts, idColumn);
+  }
+
   // Contact aware methods
   // -------------------------------------------------------------------
 
@@ -296,6 +320,11 @@ class CachingClientWrapper {
   public async addContactToContactList(listId: string, contactId: string, contactEmail: string): Promise<Object> {
     await this.clearCache();
     return await this.client.addContactToContactList(listId, contactId, contactEmail);
+  }
+
+  public async addContactsToContactList(listId: string, contactEmails: [string]): Promise<Object> {
+    await this.clearCache();
+    return await this.client.addContactsToContactList(listId, contactEmails);
   }
 
   public async removeContactToContactList(listId: string, contactId: string): Promise<Object> {

@@ -39,7 +39,7 @@ describe('Cog:GetManifest', () => {
         return field.toObject();
       });
 
-      const ua: any = authFields.filter(a => a.key === 'apiKey')[0];
+      const ua: any = authFields.filter(a => a.key === 'accessToken')[0];
       expect(ua.type).to.equal(FieldDefinition.Type.STRING);
       expect(ua.optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
 
