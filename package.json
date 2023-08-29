@@ -4,19 +4,19 @@
   "description": "HubSpot Cog for use with Crank",
   "license": "MIT",
   "cog": {
-    "name": "automatoninc/hubspot",
+    "name": "stackmoxie/hubspot",
     "label": "HubSpot",
     "homepage": "",
     "authHelpUrl": ""
   },
   "scripts": {
-    "build-docker": "docker build -t automatoninc/hubspot:$npm_package_version -t automatoninc/hubspot:latest .",
+    "build-docker": "docker build -t stackmoxie/hubspot:$npm_package_version -t stackmoxie/hubspot:latest .",
     "build-proto": "scripts/build-proto.sh",
     "build-ts": "tsc",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "start": "check-engine package.json && node -r ts-node/register src/core/grpc-server.ts",
     "test": "nyc mocha -r ts-node/register test/*.ts test/**/*.ts test/**/**/*.ts",
-    "version": "crank cog:readme automatoninc/hubspot && git add README.md"
+    "version": "crank cog:readme stackmoxie/hubspot && git add README.md"
   },
   "nyc": {
     "extension": [
