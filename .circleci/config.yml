@@ -15,7 +15,7 @@
 # In order for Docker publishing to work, you will need to do the following:
 #
 # - Set up a Circle CI context called `docker-creds-to-publish-cogs`
-# - In this context, add `DOCKERHUB_USERNAME` and `DOCKERHUB_PASS` environment
+# - In this context, add `DOCKERHUB_SM_USERNAME` and `DOCKERHUB_PASS` environment
 #   variables, using credentials that can push to `stackmoxie/hubspot`
 #
 # @see https://circleci.com/docs/2.0/contexts/
@@ -134,7 +134,7 @@ jobs:
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
-            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_SM_USERNAME" --password-stdin
             IMAGE_TAG="dev-v${CIRCLE_BUILD_NUM}"
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
             docker push $IMAGE_NAME:$IMAGE_TAG
@@ -151,7 +151,7 @@ jobs:
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
-            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_SM_USERNAME" --password-stdin
             IMAGE_TAG=${CIRCLE_TAG/v/''}
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
             docker push $IMAGE_NAME:latest
