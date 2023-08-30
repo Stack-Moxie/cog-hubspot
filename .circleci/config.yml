@@ -16,7 +16,7 @@
 #
 # - Set up a Circle CI context called `docker-creds-to-publish-cogs`
 # - In this context, add `DOCKERHUB_USERNAME` and `DOCKERHUB_PASS` environment
-#   variables, using credentials that can push to `automatoninc/hubspot`
+#   variables, using credentials that can push to `stackmoxie/hubspot`
 #
 # @see https://circleci.com/docs/2.0/contexts/
 ##
@@ -25,12 +25,12 @@ version: 2.1
 executors:
   docker-publisher:
     environment:
-      IMAGE_NAME: automatoninc/hubspot
+      IMAGE_NAME: stackmoxie/hubspot
     docker:
       - image: cimg/base:stable
   docker-user:
     environment:
-      IMAGE_NAME: automatoninc/hubspot
+      IMAGE_NAME: stackmoxie/hubspot
     machine:
       image: ubuntu-2004:202201-02
 
