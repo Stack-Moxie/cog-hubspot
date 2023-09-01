@@ -40,7 +40,7 @@ describe('AddContactsToContactListStep', () => {
       });
 
       expect(fields[0].key).to.equal('importedContacts');
-      expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
+      expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
       expect(fields[0].type).to.equal(FieldDefinition.Type.STRING);
 
       expect(fields[1].key).to.equal('listId');
@@ -77,23 +77,6 @@ describe('AddContactsToContactListStep', () => {
       it('should respond with pass', async () => {
         const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
         expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
-      });
-    });
-
-    describe('Imported contacts are not provided', () => {
-      beforeEach(() => {
-        clientWrapperStub.getContactListById.resolves({ listId, name: 'anyName' });
-        clientWrapperStub.addContactsToContactList.resolves({ invalidEmails: [] });
-
-        protoStep.setData(Struct.fromJavaScript({
-          listId,
-          expectation,
-        }));
-      });
-
-      it('should respond with error', async () => {
-        const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
-        expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.ERROR);
       });
     });
 
