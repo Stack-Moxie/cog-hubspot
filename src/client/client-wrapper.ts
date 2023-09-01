@@ -32,10 +32,11 @@ class ClientWrapper {
 
   connectToV3 = async () => {
     if (this.auth.get('refreshToken').toString()) {
+      this.clientV3 = new Client();
       const result = await this.clientV3.oauth.tokensApi.create(
         'refresh_token',
         undefined,
-        undefined,
+        this.auth.get('redirectUri').toString(),
         this.auth.get('clientId').toString(),
         this.auth.get('clientSecret').toString(),
         this.auth.get('refreshToken').toString(),
