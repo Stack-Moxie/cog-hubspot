@@ -16,6 +16,7 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
     field: 'importedContacts',
     type: FieldDefinition.Type.STRING,
     description: 'List of Successfully Imported Contacts',
+    optionality: FieldDefinition.Optionality.OPTIONAL,
   }, {
     field: 'listId',
     type: FieldDefinition.Type.STRING,
@@ -49,28 +50,37 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
   async executeStep(step: Step) {
     const stepData: any = step.getData().toJavaScript();
     const listId: string = stepData.listId;
-    const importedContacts: any[] = stepData.importedContacts ? JSON.parse(stepData.importedContacts) : [];
+    const importedContacts = stepData.importedContacts ? JSON.parse(stepData.importedContacts) : [];
     const expectation = stepData.expectation | 0;
     try {
       assertValid(listId, 'List ID is required');
-      assertValid(importedContacts, 'Imported Contact List is Required');
-      assertValid(importedContacts.length > 0, 'Imported Contact List must not be empty');
 
       const contactList = await this.client.getContactListById(listId);
 
       // HubSpot API only allows 500 contacts to be added to a list at a time
       const chunkSize = 500;
       const invalidEmails = [];
-      for (let i = 0; i < importedContacts.length; i += chunkSize) {
-        const chunk = importedContacts.slice(i, i + chunkSize);
-        const emails = chunk.map(contact => contact['email']);
-        const response = await this.client.addContactsToContactList(contactList['listId'], emails);
-        invalidEmails.push(...response['invalidEmails']);
-      }
+      let emails = [];
 
+      // support for checking errors when {{ hubspot.passedContacts.3.x.email }} token is used
+      if (stepData.multiple_contacts && Array.isArray(stepData.multiple_contacts) && stepData.multiple_contacts.length > 0) {
+        for (let i = 0; i < stepData.multiple_contacts.length; i += chunkSize) {
+          const chunk = stepData.multiple_contacts.slice(i, i + chunkSize);
+          emails = emails.concat(chunk);
+          const response = await this.client.addContactsToContactList(contactList['listId'], emails);
+          invalidEmails.push(...response['invalidEmails']);
+        }
+      } else {
+        for (let i = 0; i < importedContacts.length; i += chunkSize) {
+          const chunk = importedContacts.slice(i, i + chunkSize).map(contact => contact['email']);
+          emails = emails.concat(chunk);
+          const response = await this.client.addContactsToContactList(contactList['listId'], emails);
+          invalidEmails.push(...response['invalidEmails']);
+        }
+      }
       const result = this.assert('be', invalidEmails.length.toString(), expectation.toString(), 'invalidEmails', stepData['__piiSuppressionLevel']);
-      const contactsAddedToContactList = importedContacts.filter(item => !invalidEmails.includes(item.email));
-      const contactsNotAddedToContactList = importedContacts.filter(item => invalidEmails.includes(item.email));
+      const contactsAddedToContactList = emails.filter(item => !invalidEmails.includes(item)).map(email => ({ email }));
+      const contactsNotAddedToContactList = emails.filter(item => invalidEmails.includes(item)).map(email => ({ email }));
 
       const records = [];
       records.push(this.createTable('contactsAddedToList', 'Contacts Added to List', contactsAddedToContactList));

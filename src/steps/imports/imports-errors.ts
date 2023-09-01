@@ -46,6 +46,10 @@ export class ImportErrors extends BaseStep implements StepInterface {
       field: 'email',
       type: FieldDefinition.Type.EMAIL,
       description: 'Email of Hubspot Contact',
+    }, {
+      field: 'message',
+      type: FieldDefinition.Type.STRING,
+      description: 'Message for explanation of fail',
     }],
     dynamicFields: false,
   }];
@@ -78,11 +82,11 @@ export class ImportErrors extends BaseStep implements StepInterface {
       });
 
       let lineNumber = 1;
-      finalizedContacts.forEach((contact) => {
+      finalizedContacts.forEach((contact:any) => {
         if (errorRecordSet.has(lineNumber)) {
-          failedContacts.push(contact);
+          failedContacts.push({ ...contact, message: errorsById.results[lineNumber - 1].errorType });
         } else {
-          passedContacts.push(contact);
+          passedContacts.push({ ...contact });
         }
         lineNumber += 1;
       });
