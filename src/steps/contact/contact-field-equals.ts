@@ -56,6 +56,27 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
       description: 'The Contact\'s Last Modified Date',
     }],
     dynamicFields: true,
+  }, {
+    id: 'passedContacts',
+    type: RecordDefinition.Type.TABLE,
+    fields: [{
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: 'Email of Hubspot Contact',
+    }],
+  }, {
+    id: 'failedContacts',
+    type: RecordDefinition.Type.TABLE,
+    fields: [{
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: 'Email of Hubspot Contact',
+    }, {
+      field: 'message',
+      type: FieldDefinition.Type.STRING,
+      description: 'Message for explanation of fail',
+    }],
+    dynamicFields: false,
   }];
 
   async executeStep(step: Step) {
