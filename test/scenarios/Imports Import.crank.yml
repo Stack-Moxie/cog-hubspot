@@ -29,3 +29,6 @@ steps:
   data:
     importedContacts: '{{test.passedContacts}}'
     listId: '2'
+- step: And the lastname field on hubspot contact {{test.multiple_contacts}} should be {{test.multiple_contacts}}
+  data:
+    multiple_contacts: '{{test.passedContacts}}'

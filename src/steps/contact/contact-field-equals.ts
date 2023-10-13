@@ -94,16 +94,9 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         const failedContacts = [];
 
         contacts.forEach((contact) => {
-          let comparisonResult = false;
-          const contactFieldValue = contact[field];
-          switch (operator) {
-            case 'be':
-              comparisonResult = contactFieldValue === expectation;
-              break;
-            default:
-              comparisonResult = contactFieldValue === expectation;
-          }
-          if (comparisonResult) {
+          const value = contact.properties[field] ? contact.properties[field].value : null;
+          const result = this.assert(operator, value, expectation, field, stepData['__piiSuppressionLevel']);
+          if (result.valid) {
             passedContacts.push(contact);
           } else {
             failedContacts.push(contact);
