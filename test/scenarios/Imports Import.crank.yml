@@ -10,6 +10,7 @@ tokens:
     csvArray: '[["firstname*","lastname*","email*","company*","jobtitle*","Event Attendance Type? (Booth Visit, Event Registration, Session, Attendance, etc)*","country*","utm_source","utm_medium","utm_content"],["Geraskin"," Sev","sev@stackmoxie.com"," Stack Moxie"," CTO"," Event Registration","Canada","linkedin","organic-social","podcast"],["LeClerk","Antoine","antoine.leclerk@gmail.com","Quebec Inc.","General"," Booth","Canada","facebook","event","ebook"]]'
     id: '37663333'
     passedContacts: '[{"email":"sev@stackmoxie.com","firstname":"Geraskin","lastname":"Sev","company":" Stack Moxie","jobtitle":" CTO","event_attendance_type":" Event Registration","country":"Canada","stackmoxie_utm_source":"linkedin","stackmoxie_utm_content":"organic-social","stackmoxie_utm_medium":"podcast"},{"email":"antoine.leclerk@gmail.com","firstname":"LeClerk","lastname":"Antoine","company":"Quebec Inc.","jobtitle":"General","event_attendance_type":" Booth","country":"Canada","stackmoxie_utm_source":"facebook","stackmoxie_utm_content":"event","stackmoxie_utm_medium":"ebook"}]'
+    email: 'sev@stackmoxie.com'
 steps:
 - step: start hubspot lead import
   data:
@@ -29,3 +30,8 @@ steps:
   data:
     importedContacts: '{{test.passedContacts}}'
     listId: '2'
+- step: And the lastname field on hubspot list import contacts should be {{test.passedContacts}}
+  data:
+    importedEmails: '["sev@stackmoxie.com", "antoine.leclerk@gmail.com"]'
+
+  

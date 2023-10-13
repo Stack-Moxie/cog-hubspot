@@ -10,7 +10,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
 
   protected stepName: string = 'Check a field on a HubSpot contact';
   // tslint:disable-next-line:max-line-length
-  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_-]+) field on hubspot contact (?<email>.+\@.+\..+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?';
+  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_-]+) field on hubspot (contact (?<email>.+\@.+\..+)|list import contacts) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected actionList: string[] = ['check'];
   protected targetObject: string = 'Contact';
@@ -56,6 +56,31 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
       description: 'The Contact\'s Last Modified Date',
     }],
     dynamicFields: true,
+  }, {
+    id: 'passedContacts',
+    type: RecordDefinition.Type.TABLE,
+    fields: [{
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: 'Email of Hubspot Contact',
+    }, {
+      field: 'message',
+      type: FieldDefinition.Type.STRING,
+      description: 'Message for explanation of pass',
+    }],
+  }, {
+    id: 'failedContacts',
+    type: RecordDefinition.Type.TABLE,
+    fields: [{
+      field: 'email',
+      type: FieldDefinition.Type.EMAIL,
+      description: 'Email of Hubspot Contact',
+    }, {
+      field: 'message',
+      type: FieldDefinition.Type.STRING,
+      description: 'Message for explanation of fail',
+    }],
+    dynamicFields: false,
   }];
 
   async executeStep(step: Step) {
@@ -66,20 +91,59 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
     const operator = stepData.operator || 'be';
 
     try {
-      const contact = await this.client.getContactByEmail(email);
+      // support for checking errors when {{ hubspot.passedContacts.3.x.email }} token is used
+      if (stepData.importedEmails) {
+        stepData.multiple_contacts = JSON.parse(stepData.importedEmails);
+      }
+      if (stepData.multiple_contacts && Array.isArray(stepData.multiple_contacts) && stepData.multiple_contacts.length > 0) {
+        const contacts = await this.client.bulkGetContactsByEmail(stepData.multiple_contacts);
 
-      // Since empty fields are not being returned by the API, default to undefined
-      // so that checks that are expected to fail will behave as expected
-      const value = contact.properties[field]
-        ? contact.properties[field].value : null;
+        const passedContacts = [];
+        const failedContacts = [];
 
-      const actual = this.client.isDate(value) ? this.client.toDate(value) : value;
+        contacts.forEach((contact) => {
+          const value = contact.properties[field] ? contact.properties[field].value : null;
+          const expectations = JSON.parse(expectation);
+          let pass = false;
+          expectations.forEach((expectItem) => {
+            const result = this.assert(operator, value, expectItem[field], field, stepData['__piiSuppressionLevel']);
+            console.log('result ', result);
+            pass = pass || result.valid;
+          });
 
-      const records = this.createRecords(contact, stepData['__stepOrder']);
-      const result = this.assert(operator, actual, expectation, field, stepData['__piiSuppressionLevel']);
+          if (pass) {
+            passedContacts.push({ email: contact.properties['email'], message: `Passed: ${field} ${operator} ${expectation}` });
+          } else {
+            failedContacts.push({ email: contact.properties['email'], message: `Failed: ${field} ${operator} ${expectation}` });
+          }
+        });
+        const records = [];
+        // Build tables for passed and failed contacts
+        records.push(this.createTable('passedContacts', 'Passed Contacts', passedContacts));
+        records.push(this.createTable('failedContacts', 'Failed Contacts', failedContacts));
 
-      return result.valid ? this.pass(result.message, [], records)
-        : this.fail(result.message, [], records);
+        // Return appropriate response based on the results
+        if (failedContacts.length === 0) {
+          return this.pass('Successfully validated %d contacts', [passedContacts.length], records);
+        } else {
+          return this.fail('Failed to validate %d out of %d contacts', [failedContacts.length, stepData.multiple_contacts.length], records);
+        }
+      } else {
+        const contact = await this.client.getContactByEmail(email);
+
+        // Since empty fields are not being returned by the API, default to undefined
+        // so that checks that are expected to fail will behave as expected
+        const value = contact.properties[field]
+          ? contact.properties[field].value : null;
+
+        const actual = this.client.isDate(value) ? this.client.toDate(value) : value;
+
+        const records = this.createRecords(contact, stepData['__stepOrder']);
+        const result = this.assert(operator, actual, expectation, field, stepData['__piiSuppressionLevel']);
+
+        return result.valid ? this.pass(result.message, [], records)
+          : this.fail(result.message, [], records);
+      }
 
     } catch (e) {
       if (e instanceof util.UnknownOperatorError) {
@@ -105,6 +169,15 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
     // Ordered Record
     records.push(this.keyValue(`contact.${stepOrder}`, `Checked Contact from Step ${stepOrder}`, obj));
     return records;
+  }
+
+  private createTable(id, name, contacts) {
+    const headers = {};
+    const headerKeys = Object.keys(contacts[0] || {});
+    headerKeys.forEach((key: string) => {
+      headers[key] = key;
+    });
+    return this.table(id, name, headers, contacts);
   }
 }
 
