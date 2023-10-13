@@ -51,6 +51,11 @@ class CachingClientWrapper {
     return result;
   }
 
+  public async bulkGetContactByEmail(emails: string[]) {
+    await this.clearCache();
+    return await this.client.bulkGetContactsByEmail(emails);
+  }
+
   public async getContactById(id: string) {
     const cachekey = `HubSpot|Contact|${id}|${this.cachePrefix}`;
     const stored = await this.getCache(cachekey);
