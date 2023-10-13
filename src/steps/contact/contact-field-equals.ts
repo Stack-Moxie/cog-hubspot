@@ -10,7 +10,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
 
   protected stepName: string = 'Check a field on a HubSpot contact';
   // tslint:disable-next-line:max-line-length
-  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_-]+) field on hubspot contact (?<email>.+\@.+\..+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?';
+  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_-]+) field on hubspot (contact (?<email>.+\@.+\..+)|list import contacts) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected actionList: string[] = ['check'];
   protected targetObject: string = 'Contact';
@@ -63,6 +63,10 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
       field: 'email',
       type: FieldDefinition.Type.EMAIL,
       description: 'Email of Hubspot Contact',
+    }, {
+      field: 'message',
+      type: FieldDefinition.Type.STRING,
+      description: 'Message for explanation of pass',
     }],
   }, {
     id: 'failedContacts',
@@ -88,29 +92,41 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
 
     try {
       // support for checking errors when {{ hubspot.passedContacts.3.x.email }} token is used
+      if (stepData.importedEmails) {
+        stepData.multiple_contacts = JSON.parse(stepData.importedEmails);
+      }
       if (stepData.multiple_contacts && Array.isArray(stepData.multiple_contacts) && stepData.multiple_contacts.length > 0) {
         const contacts = await this.client.bulkGetContactsByEmail(stepData.multiple_contacts);
+
         const passedContacts = [];
         const failedContacts = [];
 
         contacts.forEach((contact) => {
           const value = contact.properties[field] ? contact.properties[field].value : null;
-          const result = this.assert(operator, value, expectation, field, stepData['__piiSuppressionLevel']);
-          if (result.valid) {
-            passedContacts.push(contact);
+          const expectations = JSON.parse(expectation);
+          let pass = false;
+          expectations.forEach((expectItem) => {
+            const result = this.assert(operator, value, expectItem[field], field, stepData['__piiSuppressionLevel']);
+            console.log('result ', result);
+            pass = pass || result.valid;
+          });
+
+          if (pass) {
+            passedContacts.push({ email: contact.properties['email'], message: `Passed: ${field} ${operator} ${expectation}` });
           } else {
-            failedContacts.push(contact);
+            failedContacts.push({ email: contact.properties['email'], message: `Failed: ${field} ${operator} ${expectation}` });
           }
         });
+        const records = [];
         // Build tables for passed and failed contacts
-        const passedTable = this.createTable('passedContacts', 'Passed Contacts', passedContacts);
-        const failedTable = this.createTable('failedContacts', 'Failed Contacts', failedContacts);
+        records.push(this.createTable('passedContacts', 'Passed Contacts', passedContacts));
+        records.push(this.createTable('failedContacts', 'Failed Contacts', failedContacts));
 
         // Return appropriate response based on the results
         if (failedContacts.length === 0) {
-          return this.pass('All contacts met the expectation.', [passedTable]);
+          return this.pass('Successfully validated %d contacts', [passedContacts.length], records);
         } else {
-          return this.fail('%d out of %d contacts failed to meet the expectation.', [failedContacts.length, stepData.multiple_contacts.length], [passedTable, failedTable]);
+          return this.fail('Failed to validate %d out of %d contacts', [failedContacts.length, stepData.multiple_contacts.length], records);
         }
       } else {
         const contact = await this.client.getContactByEmail(email);
