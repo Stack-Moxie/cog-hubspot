@@ -51,7 +51,7 @@ class CachingClientWrapper {
     return result;
   }
 
-  public async bulkGetContactByEmail(emails: string[]) {
+  public async bulkGetContactsByEmail(emails: string[]) {
     await this.clearCache();
     return await this.client.bulkGetContactsByEmail(emails);
   }
