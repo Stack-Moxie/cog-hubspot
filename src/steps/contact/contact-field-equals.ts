@@ -18,6 +18,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
     field: 'email',
     type: FieldDefinition.Type.EMAIL,
     description: "Contact's email address",
+    bulksupport: true,
   }, {
     field: 'field',
     type: FieldDefinition.Type.STRING,
@@ -92,11 +93,9 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
 
     try {
       // support for checking errors when {{ hubspot.passedContacts.3.x.email }} token is used
-      if (stepData.importedEmails) {
-        stepData.multiple_contacts = JSON.parse(stepData.importedEmails);
-      }
-      if (stepData.multiple_contacts && Array.isArray(stepData.multiple_contacts) && stepData.multiple_contacts.length > 0) {
-        const contacts = await this.client.bulkGetContactsByEmail(stepData.multiple_contacts);
+      if (stepData.multiple_email && !Array.isArray(stepData.multiple_email)) stepData.multiple_email = JSON.parse(stepData.multiple_email);
+      if (stepData.multiple_email && Array.isArray(stepData.multiple_email) && stepData.multiple_email.length > 0) {
+        const contacts = await this.client.bulkGetContactsByEmail(stepData.multiple_email);
 
         const passedContacts = [];
         const failedContacts = [];
