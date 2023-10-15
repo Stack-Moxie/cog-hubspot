@@ -39,8 +39,8 @@ describe('AddContactsToContactListStep', () => {
         return field.toObject();
       });
 
-      expect(fields[0].key).to.equal('importedContacts');
-      expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.OPTIONAL);
+      expect(fields[0].key).to.equal('email');
+      expect(fields[0].optionality).to.equal(FieldDefinition.Optionality.REQUIRED);
       expect(fields[0].type).to.equal(FieldDefinition.Type.STRING);
 
       expect(fields[1].key).to.equal('listId');
@@ -55,11 +55,8 @@ describe('AddContactsToContactListStep', () => {
 
   describe('ExecuteStep', () => {
     const listId = '123123123';
-    const importedContacts = JSON.stringify([{
-      email: 'test1@example.com',
-    }, {
-      email: 'test2@example.com',
-    }]);
+    // tslint:disable-next-line
+    const multiple_email = JSON.stringify(['test1@example.com', 'test2@example.com']);
     const expectation = 0;
 
     describe('Contacts successfully added to list', () => {
@@ -68,7 +65,7 @@ describe('AddContactsToContactListStep', () => {
         clientWrapperStub.addContactsToContactList.resolves({ invalidEmails: [] });
 
         protoStep.setData(Struct.fromJavaScript({
-          importedContacts,
+          multiple_email,
           listId,
           expectation,
         }));
@@ -85,7 +82,7 @@ describe('AddContactsToContactListStep', () => {
         clientWrapperStub.getContactListById.throws(new Error());
 
         protoStep.setData(Struct.fromJavaScript({
-          importedContacts,
+          multiple_email,
           listId,
           expectation,
         }));
@@ -103,7 +100,7 @@ describe('AddContactsToContactListStep', () => {
         clientWrapperStub.addContactsToContactList.resolves({ invalidEmails: ['test2@example.com'] });
 
         protoStep.setData(Struct.fromJavaScript({
-          importedContacts,
+          multiple_email,
           listId,
           expectation,
         }));
