@@ -42,7 +42,12 @@ export class ImportsAwareMixinV3 {
     const finalizedContactCsvArray = [];
 
     finalizedContacts.forEach((contact) => {
-      const contactArray = Object.values(contact);
+      const contactArray = Object.values(contact).map((value) => {
+        // Convert all values to string for uniformity
+        const stringValue = String(value);
+        // If value contains a comma, enclose in double quotes
+        return stringValue.includes(',') ? `"${stringValue}"` : stringValue;
+      });
       finalizedContactCsvArray.push(contactArray.join(','));
     });
 
