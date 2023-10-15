@@ -11,6 +11,7 @@ tokens:
     id: '37663333'
     passedContacts: '[{"email":"sev@stackmoxie.com","firstname":"Geraskin","lastname":"Sev","company":" Stack Moxie","jobtitle":" CTO","event_attendance_type":" Event Registration","country":"Canada","stackmoxie_utm_source":"linkedin","stackmoxie_utm_content":"organic-social","stackmoxie_utm_medium":"podcast"},{"email":"antoine.leclerk@gmail.com","firstname":"LeClerk","lastname":"Antoine","company":"Quebec Inc.","jobtitle":"General","event_attendance_type":" Booth","country":"Canada","stackmoxie_utm_source":"facebook","stackmoxie_utm_content":"event","stackmoxie_utm_medium":"ebook"}]'
     email: '["sev@stackmoxie.com", "antoine.leclerk@gmail.com"]'
+    lastname: 'Antoine'
 steps:
 - step: start hubspot lead import
   data:
@@ -30,8 +31,12 @@ steps:
   data:
     multiple_email: '{{test.email}}'
     listId: '2'
-- step: And the lastname field on hubspot list import contacts should be {{test.passedContacts}}
+- step: And the lastname field on hubspot contact {{test.email}} should be {{test.lastname}}
   data:
     multiple_email: '{{test.email}}'
-
-  
+- step: And the email field on hubspot contact {{test.email}} should be set
+  data:
+    multiple_email: '{{test.email}}'
+- step: And the owner field on hubspot contact {{test.email}} should not be set
+  data:
+    multiple_email: '{{test.email}}'
