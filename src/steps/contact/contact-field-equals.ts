@@ -100,19 +100,18 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         const failedContacts = [];
 
          // no single expectations, so we check all the contacts
-        if (!expectation || expectation.length === 0) {
+        if (!expectation || expectation.length === 0 || expectation.includes('thisisjust.atomatest.com')) {
           contacts.forEach((contact) => {
             const value = contact.properties[field] ? contact.properties[field].value : null;
             const result = this.assert(operator, value, expectation, field, stepData['__piiSuppressionLevel']);
             if (result.valid) {
-              passedContacts.push({ email: contact.properties['email'].value, message: `Passed: ${field} ${operator} ${expectation ? expectation : ''}` });
+              passedContacts.push({ email: contact.properties['email'].value, message: `Passed: ${field} ${operator}` });
             } else {
-              failedContacts.push({ email: contact.properties['email'].value, message: `Failed: ${field} ${operator} ${expectation ? expectation : ''}` });
+              failedContacts.push({ email: contact.properties['email'].value, message: `Failed: ${field} ${operator}` });
             }
           });
-        }
-        // special case where there is a single expectation for bulk contacts
-        if (expectation && expectation.length > 0 && passedContacts.length === 0) {
+        } else if (expectation && expectation.length > 0 && !expectation.includes('thisisjust.atomatest.com')) {
+          // special case where there is a single expectation for bulk contacts
           let pass = false;
           let email = '';
           contacts.forEach((contact) => {
