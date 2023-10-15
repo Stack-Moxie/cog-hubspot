@@ -13,10 +13,10 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
   protected targetObject: string = 'Contacts to Contact List';
 
   protected expectedFields: Field[] = [{
-    field: 'importedContacts',
+    field: 'email',
     type: FieldDefinition.Type.STRING,
-    description: 'List of Successfully Imported Contacts',
-    optionality: FieldDefinition.Optionality.OPTIONAL,
+    description: 'List of Successfully Imported Emails',
+    bulksupport: true,
   }, {
     field: 'listId',
     type: FieldDefinition.Type.STRING,
@@ -50,7 +50,6 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
   async executeStep(step: Step) {
     const stepData: any = step.getData().toJavaScript();
     const listId: string = stepData.listId;
-    const importedContacts = stepData.importedContacts ? JSON.parse(stepData.importedContacts) : [];
     const expectation = stepData.expectation | 0;
     try {
       assertValid(listId, 'List ID is required');
@@ -63,16 +62,10 @@ export class AddContactsToContactListStep extends BaseStep implements StepInterf
       let emails = [];
 
       // support for checking errors when {{ hubspot.passedContacts.3.x.email }} token is used
-      if (stepData.multiple_contacts && Array.isArray(stepData.multiple_contacts) && stepData.multiple_contacts.length > 0) {
-        for (let i = 0; i < stepData.multiple_contacts.length; i += chunkSize) {
-          const chunk = stepData.multiple_contacts.slice(i, i + chunkSize);
-          emails = emails.concat(chunk);
-          const response = await this.client.addContactsToContactList(contactList['listId'], emails);
-          invalidEmails.push(...response['invalidEmails']);
-        }
-      } else {
-        for (let i = 0; i < importedContacts.length; i += chunkSize) {
-          const chunk = importedContacts.slice(i, i + chunkSize).map(contact => contact['email']);
+      if (stepData.multiple_email && !Array.isArray(stepData.multiple_email)) stepData.multiple_email = JSON.parse(stepData.multiple_email);
+      if (stepData.multiple_email && Array.isArray(stepData.multiple_email) && stepData.multiple_email.length > 0) {
+        for (let i = 0; i < stepData.multiple_email.length; i += chunkSize) {
+          const chunk = stepData.multiple_email.slice(i, i + chunkSize);
           emails = emails.concat(chunk);
           const response = await this.client.addContactsToContactList(contactList['listId'], emails);
           invalidEmails.push(...response['invalidEmails']);
