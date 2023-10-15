@@ -3,14 +3,13 @@
 import { BaseStep, Field, StepInterface, ExpectedRecord } from '../../core/base-step';
 import { Step, FieldDefinition, StepDefinition, RecordDefinition, StepRecord } from '../../proto/cog_pb';
 import * as util from '@run-crank/utilities';
-import * as moment from 'moment';
 import { baseOperators } from '../../client/contants/operators';
 
 export class ContactFieldEquals extends BaseStep implements StepInterface {
 
   protected stepName: string = 'Check a field on a HubSpot contact';
   // tslint:disable-next-line:max-line-length
-  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_-]+) field on hubspot (contact (?<email>.+\@.+\..+)|list import contacts) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?';
+  protected stepExpression: string = 'the (?<field>[a-zA-Z0-9_-]+) field on hubspot contact (?<email>.+\@.+\..+) should (?<operator>be set|not be set|be less than|be greater than|be one of|be|contain|not be one of|not be|not contain|match|not match) ?(?<expectation>.+)?';
   protected stepType: StepDefinition.Type = StepDefinition.Type.VALIDATION;
   protected actionList: string[] = ['check'];
   protected targetObject: string = 'Contact';
@@ -100,22 +99,35 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         const passedContacts = [];
         const failedContacts = [];
 
-        contacts.forEach((contact) => {
-          const value = contact.properties[field] ? contact.properties[field].value : null;
-          const expectations = JSON.parse(expectation);
+         // no single expectations, so we check all the contacts
+        if (!expectation || expectation.length === 0) {
+          contacts.forEach((contact) => {
+            const value = contact.properties[field] ? contact.properties[field].value : null;
+            const result = this.assert(operator, value, expectation, field, stepData['__piiSuppressionLevel']);
+            if (result.valid) {
+              passedContacts.push({ email: contact.properties['email'].value, message: `Passed: ${field} ${operator} ${expectation ? expectation : ''}` });
+            } else {
+              failedContacts.push({ email: contact.properties['email'].value, message: `Failed: ${field} ${operator} ${expectation ? expectation : ''}` });
+            }
+          });
+        }
+        // special case where there is a single expectation for bulk contacts
+        if (expectation && expectation.length > 0 && passedContacts.length === 0) {
           let pass = false;
-          expectations.forEach((expectItem) => {
-            const result = this.assert(operator, value, expectItem[field], field, stepData['__piiSuppressionLevel']);
-            console.log('result ', result);
+          let email = '';
+          contacts.forEach((contact) => {
+            const value = contact.properties[field] ? contact.properties[field].value : null;
+            const result = this.assert(operator, value.toString(), expectation.toString(), field, stepData['__piiSuppressionLevel']);
+            if (result && result.valid) email = contact.properties['email'].value;
             pass = pass || result.valid;
           });
-
           if (pass) {
-            passedContacts.push({ email: contact.properties['email'], message: `Passed: ${field} ${operator} ${expectation}` });
+            passedContacts.push({ email, message: `Passed: ${field} ${operator} ${expectation ? expectation : ''}` });
           } else {
-            failedContacts.push({ email: contact.properties['email'], message: `Failed: ${field} ${operator} ${expectation}` });
+            failedContacts.push({ email: 'No contacts passed', message: `Failed: ${field} ${operator} ${expectation ? expectation : ''}` });
           }
-        });
+        }
+
         const records = [];
         // Build tables for passed and failed contacts
         records.push(this.createTable('passedContacts', 'Passed Contacts', passedContacts));
@@ -125,7 +137,7 @@ export class ContactFieldEquals extends BaseStep implements StepInterface {
         if (failedContacts.length === 0) {
           return this.pass('Successfully validated %d contacts', [passedContacts.length], records);
         } else {
-          return this.fail('Failed to validate %d out of %d contacts', [failedContacts.length, stepData.multiple_contacts.length], records);
+          return this.fail('Failed to validate %d out of %d contacts', [failedContacts.length, stepData.multiple_email.length], records);
         }
       } else {
         const contact = await this.client.getContactByEmail(email);
