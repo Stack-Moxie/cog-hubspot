@@ -14,7 +14,7 @@ export class ImportsAwareMixinV3 {
       const importResponse = await this.clientV3.crm.imports.publicImportsApi.getErrors(Number(id));
       return importResponse;
     } catch (e) {
-      console.error('Error calling hubspotClient.crm.imports.publicImportsApi.getErrors: ', e.message);
+      throw new Error(`Error calling hubspotClient.crm.imports.publicImportsApi.getErrors: ${e.message}`);
     }
   }
 
@@ -28,7 +28,7 @@ export class ImportsAwareMixinV3 {
       const importResponse = await this.clientV3.crm.imports.coreApi.getById(Number(id));
       return importResponse;
     } catch (e) {
-      console.error('Error calling hubspotClient.crm.imports.coreApi.getById: ', e.message);
+      throw new Error(`Error calling hubspotClient.crm.imports.coreApi.getById: ${e.message}`);
     }
   }
 
@@ -39,7 +39,9 @@ export class ImportsAwareMixinV3 {
 
     const fileName = `imports-${new Date().toISOString()}.csv`;
     const finalizedContacts = Object.values(contacts);
+    const finalizedContactsHeaders = Object.keys(finalizedContacts[0]);
     const finalizedContactCsvArray = [];
+    finalizedContactCsvArray.push(finalizedContactsHeaders.join(','));
 
     finalizedContacts.forEach((contact) => {
       const contactArray = Object.values(contact).map((value) => {
@@ -80,7 +82,7 @@ export class ImportsAwareMixinV3 {
           fileName,
           fileFormat: 'CSV',
           fileImportPage: {
-            hasHeader: false,
+            hasHeader: true,
             columnMappings: columnMapArray,
           },
         },
@@ -92,7 +94,7 @@ export class ImportsAwareMixinV3 {
       const importResponse = await this.clientV3.crm.imports.coreApi.create(file, JSON.stringify(fileMetadata));
       return importResponse;
     } catch (e) {
-      console.error('Error calling hubspotClient.crm.imports.coreApi.create: ', e.message);
+      throw new Error(`Error calling hubspotClient.crm.imports.coreApi.create: ${e.message}`);
     }
   }
 }
