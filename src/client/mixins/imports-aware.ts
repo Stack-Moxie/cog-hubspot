@@ -14,7 +14,7 @@ export class ImportsAwareMixinV3 {
       const importResponse = await this.clientV3.crm.imports.publicImportsApi.getErrors(Number(id));
       return importResponse;
     } catch (e) {
-      console.error('Error calling hubspotClient.crm.imports.publicImportsApi.getErrors: ', e.message);
+      throw new Error(`Error calling hubspotClient.crm.imports.publicImportsApi.getErrors: ${e.message}`);
     }
   }
 
@@ -28,7 +28,7 @@ export class ImportsAwareMixinV3 {
       const importResponse = await this.clientV3.crm.imports.coreApi.getById(Number(id));
       return importResponse;
     } catch (e) {
-      console.error('Error calling hubspotClient.crm.imports.coreApi.getById: ', e.message);
+      throw new Error(`Error calling hubspotClient.crm.imports.coreApi.getById: ${e.message}`);
     }
   }
 
@@ -94,7 +94,7 @@ export class ImportsAwareMixinV3 {
       const importResponse = await this.clientV3.crm.imports.coreApi.create(file, JSON.stringify(fileMetadata));
       return importResponse;
     } catch (e) {
-      console.error('Error calling hubspotClient.crm.imports.coreApi.create: ', e.message);
+      throw new Error(`Error calling hubspotClient.crm.imports.coreApi.create: ${e.message}`);
     }
   }
 }
