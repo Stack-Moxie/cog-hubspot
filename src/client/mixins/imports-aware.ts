@@ -39,7 +39,9 @@ export class ImportsAwareMixinV3 {
 
     const fileName = `imports-${new Date().toISOString()}.csv`;
     const finalizedContacts = Object.values(contacts);
+    const finalizedContactsHeaders = Object.keys(finalizedContacts[0]);
     const finalizedContactCsvArray = [];
+    finalizedContactCsvArray.push(finalizedContactsHeaders.join(','));
 
     finalizedContacts.forEach((contact) => {
       const contactArray = Object.values(contact).map((value) => {
@@ -80,7 +82,7 @@ export class ImportsAwareMixinV3 {
           fileName,
           fileFormat: 'CSV',
           fileImportPage: {
-            hasHeader: false,
+            hasHeader: true,
             columnMappings: columnMapArray,
           },
         },
