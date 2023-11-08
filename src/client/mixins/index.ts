@@ -10,3 +10,4 @@ export * from './quote-aware';
 export * from './association-aware';
 export * from './contact-list-aware';
 export * from './imports-aware';
+export * from './stats-aware';

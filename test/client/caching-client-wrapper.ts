@@ -27,6 +27,7 @@ describe('CachingClientWrapper', () => {
       updateContactById: sinon.spy(),
       enrollContactToWorkflow: sinon.spy(),
       currentContactWorkflows: sinon.spy(),
+      getApiUsage: sinon.spy(),
       isDate: sinon.spy(),
       toDate: sinon.spy(),
       toEpoch: sinon.spy(),
@@ -210,6 +211,17 @@ describe('CachingClientWrapper', () => {
       done();
     });
   })
+
+  it('getApiUsage using original function', (done) => {
+    cachingClientWrapperUnderTest = new CachingClientWrapper(clientWrapperStub, redisClientStub, idMap);
+    cachingClientWrapperUnderTest.getAsync = sinon.stub().returns(false);
+    cachingClientWrapperUnderTest.getApiUsage();
+
+    setTimeout(() => {
+      expect(clientWrapperStub.getApiUsage).to.have.been.calledWith();
+      done();
+    });
+  });
 
   it('getCache', (done) => {
     redisClientStub.get = sinon.stub().yields();

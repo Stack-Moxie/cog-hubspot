@@ -755,4 +755,35 @@ describe('ClientWrapper', () => {
       expect(hubspotClientStub.crm.imports.coreApi.create).to.have.been.called;
     });
   });
+
+  describe('StatsAware', () => {
+    let hubspotClientStub;
+    let responseObject;
+
+    beforeEach(() => {
+      hubspotClientStub = {
+        apiRequest: sinon.stub()
+      };
+      responseObject = {
+        statusCode: 200,
+        headers: {
+          get: sinon.stub()
+        }
+      }
+
+      hubspotConstructorStub = sinon.stub();
+      hubspotConstructorStub.returns(hubspotClientStub);
+      clientWrapperUnderTest = new ClientWrapper(metadata, hubspotConstructorStub);
+      clientWrapperUnderTest.connectToV3 = sinon.stub();
+      clientWrapperUnderTest.clientV3 = hubspotClientStub;
+    });
+    it('getApiUsage', async () => {
+      hubspotClientStub.apiRequest.resolves(responseObject);
+      await clientWrapperUnderTest.getApiUsage();
+      expect(hubspotClientStub.apiRequest).to.have.been.calledWith({
+        method: 'GET',
+        path: '/integrations/v1/me',
+      });
+    });
+  });
 });

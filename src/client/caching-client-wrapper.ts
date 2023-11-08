@@ -352,6 +352,10 @@ class CachingClientWrapper {
     return this.client.toEpoch(date);
   }
 
+  public getApiUsage() {
+    return this.client.getApiUsage();
+  }
+
   // Redis methods for get, set, and delete
   // -------------------------------------------------------------------
 
