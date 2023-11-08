@@ -16,6 +16,7 @@ import {
   TicketAwareMixin,
   WorkflowAwareMixin,
   ImportsAwareMixinV3,
+  StatsAwareMixinV3,
 } from './mixins';
 
 class ClientWrapper {
@@ -92,7 +93,8 @@ interface ClientWrapper extends
   QuoteAwareMixin,
   AssociationAwareMixin,
   ContactListAwareMixin,
-  ImportsAwareMixinV3 { }
+  ImportsAwareMixinV3,
+  StatsAwareMixinV3 { }
 
 applyMixins(ClientWrapper, [
   ContactAwareMixin,
@@ -107,6 +109,7 @@ applyMixins(ClientWrapper, [
   AssociationAwareMixin,
   ContactListAwareMixin,
   ImportsAwareMixinV3,
+  StatsAwareMixinV3,
 ]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
