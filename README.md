@@ -1,6 +1,6 @@
 # HubSpot Cog
 
-[![CircleCI](https://circleci.com/gh/run-crank/cog-hubspot/tree/master.svg?style=svg)](https://circleci.com/gh/run-crank/cog-hubspot/tree/master)
+[![CircleCI](https://circleci.com/gh/Stack-Moxie/cog-hubspot/tree/master.svg?style=svg)](https://circleci.com/gh/Stack-Moxie/cog-hubspot/tree/master)
 
 This is a [Crank][what-is-crank] Cog for HubSpot, providing
 steps and assertions for you to validate the state and behavior of your

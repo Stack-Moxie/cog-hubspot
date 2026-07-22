@@ -6,8 +6,8 @@
   "cog": {
     "name": "stackmoxie/hubspot",
     "label": "HubSpot",
-    "homepage": "",
-    "authHelpUrl": ""
+    "homepage": "https://github.com/Stack-Moxie/cog-hubspot",
+    "authHelpUrl": "https://developers.hubspot.com/docs/api/private-apps"
   },
   "scripts": {
     "build-docker": "docker build -t stackmoxie/hubspot:$npm_package_version -t stackmoxie/hubspot:latest .",
