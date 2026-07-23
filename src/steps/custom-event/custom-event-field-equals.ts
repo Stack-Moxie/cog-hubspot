@@ -213,12 +213,16 @@ export class CustomEventFieldEquals extends BaseStep implements StepInterface {
       const val = props[key];
       flat[key] = (val && typeof val === 'object' && val.value !== undefined) ? val.value : val;
     });
-    return {
+    const normalized: Record<string, any> = {
       ...flat,
       eventType: occ.eventType || occ.eventName || flat.eventType,
       occurredAt: occ.occurredAt || occ.occurred_at || occ.timestamp || flat.occurredAt || flat.hs_timestamp,
-      objectId: occ.objectId || occ.object_id || flat.objectId,
     };
+    const objectId = occ.objectId || occ.object_id || flat.objectId;
+    if (objectId !== undefined && objectId !== null && objectId !== '') {
+      normalized.objectId = objectId;
+    }
+    return normalized;
   }
 
   private pickKeyProps(occ: Record<string, any>): Record<string, any> {
@@ -256,18 +260,20 @@ export class CustomEventFieldEquals extends BaseStep implements StepInterface {
   }
 
   private buildRecords(email: string, contactId: any, eventType: string, match: Record<string, any>): StepRecord[] {
-    const obj = {
+    const obj: Record<string, any> = {
       email,
       eventType,
       contactId: String(contactId),
-      occurredAt: match.occurredAt,
-      response_type: match.response_type,
-      asset_id: match.asset_id,
-      tactic_id: match.tactic_id,
-      source_system: match.source_system,
       ...match,
     };
-    return [this.keyValue('customEvent', 'Checked Custom Event', obj)];
+    // Struct.fromJavaScript rejects undefined values
+    const cleaned: Record<string, any> = {};
+    Object.keys(obj).forEach((key) => {
+      if (obj[key] !== undefined && obj[key] !== null) {
+        cleaned[key] = obj[key];
+      }
+    });
+    return [this.keyValue('customEvent', 'Checked Custom Event', cleaned)];
   }
 }
 

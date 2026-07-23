@@ -77,6 +77,7 @@ describe('CustomEventFieldEquals', () => {
       }]);
 
       const response: RunStepResponse = await stepUnderTest.executeStep(protoStep);
+      expect(response.getMessageFormat(), response.getMessageFormat()).to.not.match(/error checking/i);
       expect(response.getOutcome()).to.equal(RunStepResponse.Outcome.PASSED);
       expect(clientWrapperStub.getEventOccurrences).to.have.been.called;
     });
