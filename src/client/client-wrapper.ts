@@ -8,6 +8,7 @@ import {
   CompanyAwareMixin,
   ContactAwareMixin,
   ContactListAwareMixin,
+  CustomEventAwareMixin,
   DateAwareMixin,
   DealAwareMixin,
   MarketingEventAwareMixin,
@@ -94,7 +95,8 @@ interface ClientWrapper extends
   AssociationAwareMixin,
   ContactListAwareMixin,
   ImportsAwareMixinV3,
-  StatsAwareMixinV3 { }
+  StatsAwareMixinV3,
+  CustomEventAwareMixin { }
 
 applyMixins(ClientWrapper, [
   ContactAwareMixin,
@@ -110,6 +112,7 @@ applyMixins(ClientWrapper, [
   ContactListAwareMixin,
   ImportsAwareMixinV3,
   StatsAwareMixinV3,
+  CustomEventAwareMixin,
 ]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {

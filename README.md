@@ -54,6 +54,16 @@ Scenario files.
 | **Enroll a HubSpot Contact into a Workflow**<br>(`EnrollContactToWorkflowStep`) | `enroll the (?<email>.+) hubspot contact into workflow (?<workflow>.+)` | - `workflow`: Workflow's Name or ID <br><br>- `email`: Contact's email address |
 <!-- stepDetailsEnd -->
 
+## CI / Docker validation
+
+Local `npm install` may fail on Apple Silicon / modern Node (`grpc-tools` has no darwin-arm64 prebuild). Prefer:
+
+```shell-session
+docker build --platform linux/amd64 -t stackmoxie/hubspot:local .
+```
+
+Publish only via CircleCI after PR merge to `master` (context `docker-creds-to-publish-cogs`). Do not push images directly to Docker Hub/ACR from a laptop.
+
 ## Development and Contributing
 Pull requests are welcome. For major changes, please open an issue first to
 discuss what you would like to change. Please make sure to add or update tests
