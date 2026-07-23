@@ -138,20 +138,20 @@ export class CustomEventFieldEquals extends BaseStep implements StepInterface {
 
       const occurrences: any[] = await this.client.getEventOccurrences({
         eventType,
-        objectId: String(contactId),
         email,
         occurredAfter,
+        objectId: String(contactId),
         propertyFilters: serverFilters,
         limit: 100,
       });
 
-      const normalized = occurrences.map((occ) => this.normalizeOccurrence(occ));
+      const normalized = occurrences.map(occ => this.normalizeOccurrence(occ));
 
       let match = null;
       if (Object.keys(properties).length === 0) {
         match = normalized.length > 0 ? normalized[0] : null;
       } else {
-        match = normalized.find((occ) => this.propertiesMatch(occ, properties, operator, stepData['__piiSuppressionLevel']));
+        match = normalized.find(occ => this.propertiesMatch(occ, properties, operator, stepData['__piiSuppressionLevel']));
       }
 
       const expectedPropsForMessage = {
@@ -258,8 +258,8 @@ export class CustomEventFieldEquals extends BaseStep implements StepInterface {
   private buildRecords(email: string, contactId: any, eventType: string, match: Record<string, any>): StepRecord[] {
     const obj = {
       email,
-      contactId: String(contactId),
       eventType,
+      contactId: String(contactId),
       occurredAt: match.occurredAt,
       response_type: match.response_type,
       asset_id: match.asset_id,

@@ -54,8 +54,8 @@ export class CustomEventAwareMixin {
     const path = `/events/event-occurrences/2026-03?${params.toString()}`;
     try {
       const response = await this.clientV3.apiRequest({
-        method: 'GET',
         path,
+        method: 'GET',
       });
       const body = await response.json();
       if (Array.isArray(body)) {
@@ -75,8 +75,8 @@ export class CustomEventAwareMixin {
     const path = '/events/event-occurrences/2026-03/event-types';
     try {
       const response = await this.clientV3.apiRequest({
-        method: 'GET',
         path,
+        method: 'GET',
       });
       const body = await response.json();
       if (Array.isArray(body)) {
