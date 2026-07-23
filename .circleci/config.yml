@@ -32,7 +32,7 @@ executors:
     environment:
       IMAGE_NAME: stackmoxie/hubspot
     machine:
-      image: ubuntu-2004:202201-02
+      image: ubuntu-2004:2024.08.1
 
 jobs:
   test:
@@ -116,8 +116,8 @@ jobs:
           command: |
             curl -s https://get.crank.run/install.sh | sh
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:local-test
-            crank cog:install $IMAGE_NAME:local-test
-            crank cog:install automatoninc/web:0.3.1
+            crank cog:install $IMAGE_NAME:local-test --ignore-auth
+            crank cog:install stackmoxie/web:dev-v1542 --ignore-auth
       # - run:
       #     name: Run all test scenarios
       #     command: crank run ./test/scenarios
